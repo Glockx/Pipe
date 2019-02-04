@@ -1,0 +1,34 @@
+PODS:
+  - BCColor (0.2)
+  - GCDWebServer/Core (3.5.2)
+  - GCDWebServer/WebUploader (3.5.2):
+    - GCDWebServer/Core
+  - MarqueeLabel/Swift (3.2.0)
+  - SnapKit (4.0.1)
+  - ViewAnimator (2.2.2)
+
+DEPENDENCIES:
+  - BCColor
+  - GCDWebServer/WebUploader (~> 3.0)
+  - MarqueeLabel/Swift
+  - SnapKit (~> 4.0.0)
+  - ViewAnimator
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - BCColor
+    - GCDWebServer
+    - MarqueeLabel
+    - SnapKit
+    - ViewAnimator
+
+SPEC CHECKSUMS:
+  BCColor: 2425540cb0da92795b81a1f15b5289a92279c9eb
+  GCDWebServer: ead88cd14596dd4eae4f5830b8877c87c8728990
+  MarqueeLabel: 440a502b91a9179bd98f9fff00ba1150650a1c0e
+  SnapKit: 0de968a9fec17499afa29683b05d0c775b6d1c29
+  ViewAnimator: 6eaa112663b6a2d9e6b2573df65b416dd051cbe4
+
+PODFILE CHECKSUM: 1d5c68ba40af7da7d1a49baa6db5b7fce79ef56c
+
+COCOAPODS: 1.5.3

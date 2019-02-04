@@ -7,18 +7,68 @@
 //
 
 import UIKit
-
+import MarqueeLabel
+import SnapKit
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    var currentPlaying: MiniPlayerView!
+    var hasadded = false
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        UIApplication.shared.statusBarView?.backgroundColor = UIColor.white
+        TrackTool.shareInstance.tracks = loadSongs() ?? TrackTool.shareInstance.tracks
+        
+        #if DEBUG
+        Bundle(path: "/Applications/InjectionIII.app/Contents/Resources/iOSInjection10.bundle")?.load()
+        #endif
         return true
     }
+    
+    func loadSongs() -> [Track]!
+    {
+        let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+        let ArchiveURL = DocumentsDirectory.appendingPathComponent("Tracks")
+        return NSKeyedUnarchiver.unarchiveObject(withFile: ArchiveURL.path) as? [Track]
+    }
+    
+    func tryToDrawOnTheWindow()
+    {
+        currentPlaying = MiniPlayerView()
+        if let window = window, let view = window.rootViewController?.view
+        {
 
+            let count = view.subviews.count
+           
+            if currentPlaying != nil
+            {
+                if !hasadded
+                {
+                    view.insertSubview(currentPlaying, at: count)
+                    currentPlaying?.snp.makeConstraints{ (make) -> Void in
+                        make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-49)
+                        make.left.equalTo(view.snp.left)
+                        make.right.equalTo(view.snp.right)
+                        make.height.equalTo(64)
+                    }
+                    print("first add: \(count)" )
+                    hasadded = true
+                }
+                else
+                {
+                }
+            }
+        }
+        else
+        {
+            print("No root view on which to draw")
+        }
+    }
+    
+    
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
