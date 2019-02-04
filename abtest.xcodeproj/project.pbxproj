@@ -7,21 +7,75 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		190B5FC521467A7E00B3B7C9 /* TrackTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190B5FC321467A7D00B3B7C9 /* TrackTool.swift */; };
+		190B5FC621467A7E00B3B7C9 /* TimeFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190B5FC421467A7D00B3B7C9 /* TimeFormat.swift */; };
 		190EF3ED2143D692000EC0F0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190EF3EC2143D692000EC0F0 /* AppDelegate.swift */; };
-		190EF3EF2143D692000EC0F0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190EF3EE2143D692000EC0F0 /* ViewController.swift */; };
 		190EF3F22143D692000EC0F0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 190EF3F02143D692000EC0F0 /* Main.storyboard */; };
 		190EF3F42143D697000EC0F0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 190EF3F32143D697000EC0F0 /* Assets.xcassets */; };
 		190EF3F72143D697000EC0F0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 190EF3F52143D697000EC0F0 /* LaunchScreen.storyboard */; };
+		190EF40C21442E27000EC0F0 /* if_business_economic_finance_interprise_company_browser_2570326.png in Resources */ = {isa = PBXBuildFile; fileRef = 190EF40B21442E27000EC0F0 /* if_business_economic_finance_interprise_company_browser_2570326.png */; };
+		190EF40E2144367F000EC0F0 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 190EF40D2144367F000EC0F0 /* Extensions.swift */; };
+		19602688214647D80027E3C7 /* Track.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19602687214647D80027E3C7 /* Track.swift */; };
+		1960268B214648200027E3C7 /* TrackModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19602689214648200027E3C7 /* TrackModel.swift */; };
+		1960268C214648200027E3C7 /* TrackMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1960268A214648200027E3C7 /* TrackMessage.swift */; };
+		19BAC96A2144D84B003FC817 /* PlaylistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19BAC9632144D84B003FC817 /* PlaylistViewController.swift */; };
+		19BAC96B2144D84B003FC817 /* AlbumsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19BAC9642144D84B003FC817 /* AlbumsViewController.swift */; };
+		19BAC96C2144D84B003FC817 /* FilesViewController .swift in Sources */ = {isa = PBXBuildFile; fileRef = 19BAC9652144D84B003FC817 /* FilesViewController .swift */; };
+		19BAC96E2144D84B003FC817 /* SongServerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19BAC9672144D84B003FC817 /* SongServerViewController.swift */; };
+		19BAC96F2144D84B003FC817 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19BAC9682144D84B003FC817 /* ViewController.swift */; };
+		19BAC9702144D84B003FC817 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19BAC9692144D84B003FC817 /* SettingsViewController.swift */; };
+		19BAC972214516C8003FC817 /* if_business_economic_finance_interprise_company_search_2570301.png in Resources */ = {isa = PBXBuildFile; fileRef = 19BAC971214516C7003FC817 /* if_business_economic_finance_interprise_company_search_2570301.png */; };
+		524670F91CCFA25E1087AE36 /* Pods_abtest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCA82E8A858ACC80E2C18238 /* Pods_abtest.framework */; };
+		563E3F3C2149158600F05B16 /* MusicPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563E3F3B2149158600F05B16 /* MusicPlayerViewController.swift */; };
+		56959D2321FB549B0071F71B /* MiniPlayerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 56959D2221FB549B0071F71B /* MiniPlayerView.xib */; };
+		56959D2521FB54C40071F71B /* MiniPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56959D2421FB54C40071F71B /* MiniPlayerView.swift */; };
+		569B636E220028BD009063B5 /* AlbumDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 569B636D220028BD009063B5 /* AlbumDetailsViewController.swift */; };
+		569B6371220062A2009063B5 /* StrechView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 569B6370220062A2009063B5 /* StrechView.xib */; };
+		569B637522006307009063B5 /* StrechView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 569B637422006307009063B5 /* StrechView.swift */; };
+		569B637722006E6A009063B5 /* 1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 569B637622006E69009063B5 /* 1.jpg */; };
+		56CDE1FB219C30E400562E56 /* _free-icons_png_512_2570314.png in Resources */ = {isa = PBXBuildFile; fileRef = 56CDE1FA219C30E400562E56 /* _free-icons_png_512_2570314.png */; };
+		56D7B3A521DDB79B0040C890 /* UIImageColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56D7B3A421DDB79B0040C890 /* UIImageColors.swift */; };
+		56E50E1622071F7400C46ED9 /* Playlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E50E1522071F7400C46ED9 /* Playlist.swift */; };
+		56E50E18220724F700C46ED9 /* PlaylistTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E50E17220724F700C46ED9 /* PlaylistTool.swift */; };
+		56E50E1A2207319800C46ED9 /* PlaylistCreationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E50E192207319800C46ED9 /* PlaylistCreationViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		08B14EAA54C5F4FCB498A6FF /* Pods-abtest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-abtest.debug.xcconfig"; path = "Pods/Target Support Files/Pods-abtest/Pods-abtest.debug.xcconfig"; sourceTree = "<group>"; };
+		190B5FC321467A7D00B3B7C9 /* TrackTool.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackTool.swift; sourceTree = "<group>"; };
+		190B5FC421467A7D00B3B7C9 /* TimeFormat.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeFormat.swift; sourceTree = "<group>"; };
 		190EF3E92143D692000EC0F0 /* abtest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = abtest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		190EF3EC2143D692000EC0F0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		190EF3EE2143D692000EC0F0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		190EF3F12143D692000EC0F0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		190EF3F32143D697000EC0F0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		190EF3F62143D697000EC0F0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		190EF3F82143D697000EC0F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		190EF40B21442E27000EC0F0 /* if_business_economic_finance_interprise_company_browser_2570326.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = if_business_economic_finance_interprise_company_browser_2570326.png; sourceTree = "<group>"; };
+		190EF40D2144367F000EC0F0 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		19602687214647D80027E3C7 /* Track.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Track.swift; sourceTree = "<group>"; };
+		19602689214648200027E3C7 /* TrackModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackModel.swift; sourceTree = "<group>"; };
+		1960268A214648200027E3C7 /* TrackMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackMessage.swift; sourceTree = "<group>"; };
+		19BAC9632144D84B003FC817 /* PlaylistViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistViewController.swift; sourceTree = "<group>"; };
+		19BAC9642144D84B003FC817 /* AlbumsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumsViewController.swift; sourceTree = "<group>"; };
+		19BAC9652144D84B003FC817 /* FilesViewController .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FilesViewController .swift"; sourceTree = "<group>"; };
+		19BAC9672144D84B003FC817 /* SongServerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongServerViewController.swift; sourceTree = "<group>"; };
+		19BAC9682144D84B003FC817 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		19BAC9692144D84B003FC817 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		19BAC971214516C7003FC817 /* if_business_economic_finance_interprise_company_search_2570301.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = if_business_economic_finance_interprise_company_search_2570301.png; sourceTree = "<group>"; };
+		563E3F3B2149158600F05B16 /* MusicPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayerViewController.swift; sourceTree = "<group>"; };
+		56959D2221FB549B0071F71B /* MiniPlayerView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MiniPlayerView.xib; sourceTree = "<group>"; };
+		56959D2421FB54C40071F71B /* MiniPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerView.swift; sourceTree = "<group>"; };
+		569B636D220028BD009063B5 /* AlbumDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumDetailsViewController.swift; sourceTree = "<group>"; };
+		569B6370220062A2009063B5 /* StrechView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = StrechView.xib; sourceTree = "<group>"; };
+		569B637422006307009063B5 /* StrechView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrechView.swift; sourceTree = "<group>"; };
+		569B637622006E69009063B5 /* 1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1.jpg; sourceTree = "<group>"; };
+		56CDE1FA219C30E400562E56 /* _free-icons_png_512_2570314.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "_free-icons_png_512_2570314.png"; sourceTree = "<group>"; };
+		56D7B3A421DDB79B0040C890 /* UIImageColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageColors.swift; sourceTree = "<group>"; };
+		56E50E1522071F7400C46ED9 /* Playlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Playlist.swift; sourceTree = "<group>"; };
+		56E50E17220724F700C46ED9 /* PlaylistTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistTool.swift; sourceTree = "<group>"; };
+		56E50E192207319800C46ED9 /* PlaylistCreationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistCreationViewController.swift; sourceTree = "<group>"; };
+		E334CF63368A366437ABF972 /* Pods-abtest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-abtest.release.xcconfig"; path = "Pods/Target Support Files/Pods-abtest/Pods-abtest.release.xcconfig"; sourceTree = "<group>"; };
+		FCA82E8A858ACC80E2C18238 /* Pods_abtest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_abtest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,6 +83,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				524670F91CCFA25E1087AE36 /* Pods_abtest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -40,6 +95,8 @@
 			children = (
 				190EF3EB2143D692000EC0F0 /* abtest */,
 				190EF3EA2143D692000EC0F0 /* Products */,
+				4B439B9871E7B0346690A5CA /* Pods */,
+				5DDC64350C5A0259734676FE /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -54,14 +111,80 @@
 		190EF3EB2143D692000EC0F0 /* abtest */ = {
 			isa = PBXGroup;
 			children = (
-				190EF3EC2143D692000EC0F0 /* AppDelegate.swift */,
-				190EF3EE2143D692000EC0F0 /* ViewController.swift */,
+				56BD81A421F873B10067755B /* Views */,
+				19602686214647C90027E3C7 /* Model */,
+				190EF4132144D6C9000EC0F0 /* Extension */,
 				190EF3F02143D692000EC0F0 /* Main.storyboard */,
-				190EF3F32143D697000EC0F0 /* Assets.xcassets */,
 				190EF3F52143D697000EC0F0 /* LaunchScreen.storyboard */,
+				569B6370220062A2009063B5 /* StrechView.xib */,
+				56959D2221FB549B0071F71B /* MiniPlayerView.xib */,
+				569B637622006E69009063B5 /* 1.jpg */,
 				190EF3F82143D697000EC0F0 /* Info.plist */,
+				190EF3F32143D697000EC0F0 /* Assets.xcassets */,
 			);
 			path = abtest;
+			sourceTree = "<group>";
+		};
+		190EF4132144D6C9000EC0F0 /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				56CDE1FA219C30E400562E56 /* _free-icons_png_512_2570314.png */,
+				190EF40D2144367F000EC0F0 /* Extensions.swift */,
+				190EF40B21442E27000EC0F0 /* if_business_economic_finance_interprise_company_browser_2570326.png */,
+				19BAC971214516C7003FC817 /* if_business_economic_finance_interprise_company_search_2570301.png */,
+				56D7B3A421DDB79B0040C890 /* UIImageColors.swift */,
+			);
+			path = Extension;
+			sourceTree = "<group>";
+		};
+		19602686214647C90027E3C7 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				190B5FC421467A7D00B3B7C9 /* TimeFormat.swift */,
+				19602687214647D80027E3C7 /* Track.swift */,
+				1960268A214648200027E3C7 /* TrackMessage.swift */,
+				19602689214648200027E3C7 /* TrackModel.swift */,
+				190B5FC321467A7D00B3B7C9 /* TrackTool.swift */,
+				56E50E1522071F7400C46ED9 /* Playlist.swift */,
+				56E50E17220724F700C46ED9 /* PlaylistTool.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		4B439B9871E7B0346690A5CA /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				08B14EAA54C5F4FCB498A6FF /* Pods-abtest.debug.xcconfig */,
+				E334CF63368A366437ABF972 /* Pods-abtest.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		56BD81A421F873B10067755B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				569B636D220028BD009063B5 /* AlbumDetailsViewController.swift */,
+				19BAC9642144D84B003FC817 /* AlbumsViewController.swift */,
+				190EF3EC2143D692000EC0F0 /* AppDelegate.swift */,
+				19BAC9652144D84B003FC817 /* FilesViewController .swift */,
+				56959D2421FB54C40071F71B /* MiniPlayerView.swift */,
+				563E3F3B2149158600F05B16 /* MusicPlayerViewController.swift */,
+				56E50E192207319800C46ED9 /* PlaylistCreationViewController.swift */,
+				19BAC9632144D84B003FC817 /* PlaylistViewController.swift */,
+				19BAC9692144D84B003FC817 /* SettingsViewController.swift */,
+				19BAC9672144D84B003FC817 /* SongServerViewController.swift */,
+				569B637422006307009063B5 /* StrechView.swift */,
+				19BAC9682144D84B003FC817 /* ViewController.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		5DDC64350C5A0259734676FE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FCA82E8A858ACC80E2C18238 /* Pods_abtest.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -71,9 +194,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 190EF3FB2143D697000EC0F0 /* Build configuration list for PBXNativeTarget "abtest" */;
 			buildPhases = (
+				1BE7F999BCC6D398016FF1BD /* [CP] Check Pods Manifest.lock */,
 				190EF3E52143D692000EC0F0 /* Sources */,
 				190EF3E62143D692000EC0F0 /* Frameworks */,
 				190EF3E72143D692000EC0F0 /* Resources */,
+				E25C87E271340E847A324F91 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -96,6 +221,11 @@
 				TargetAttributes = {
 					190EF3E82143D692000EC0F0 = {
 						CreatedOnToolsVersion = 9.4.1;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -122,21 +252,93 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				190EF40C21442E27000EC0F0 /* if_business_economic_finance_interprise_company_browser_2570326.png in Resources */,
 				190EF3F72143D697000EC0F0 /* LaunchScreen.storyboard in Resources */,
 				190EF3F42143D697000EC0F0 /* Assets.xcassets in Resources */,
+				569B6371220062A2009063B5 /* StrechView.xib in Resources */,
+				56959D2321FB549B0071F71B /* MiniPlayerView.xib in Resources */,
+				19BAC972214516C8003FC817 /* if_business_economic_finance_interprise_company_search_2570301.png in Resources */,
+				569B637722006E6A009063B5 /* 1.jpg in Resources */,
+				56CDE1FB219C30E400562E56 /* _free-icons_png_512_2570314.png in Resources */,
 				190EF3F22143D692000EC0F0 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		1BE7F999BCC6D398016FF1BD /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-abtest-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E25C87E271340E847A324F91 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-abtest/Pods-abtest-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/BCColor/BCColor.framework",
+				"${BUILT_PRODUCTS_DIR}/GCDWebServer/GCDWebServer.framework",
+				"${BUILT_PRODUCTS_DIR}/MarqueeLabel/MarqueeLabel.framework",
+				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
+				"${BUILT_PRODUCTS_DIR}/ViewAnimator/ViewAnimator.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BCColor.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GCDWebServer.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MarqueeLabel.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ViewAnimator.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-abtest/Pods-abtest-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		190EF3E52143D692000EC0F0 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				190EF3EF2143D692000EC0F0 /* ViewController.swift in Sources */,
+				19BAC96B2144D84B003FC817 /* AlbumsViewController.swift in Sources */,
+				19602688214647D80027E3C7 /* Track.swift in Sources */,
+				1960268B214648200027E3C7 /* TrackModel.swift in Sources */,
+				563E3F3C2149158600F05B16 /* MusicPlayerViewController.swift in Sources */,
+				56959D2521FB54C40071F71B /* MiniPlayerView.swift in Sources */,
+				190EF40E2144367F000EC0F0 /* Extensions.swift in Sources */,
 				190EF3ED2143D692000EC0F0 /* AppDelegate.swift in Sources */,
+				19BAC96C2144D84B003FC817 /* FilesViewController .swift in Sources */,
+				190B5FC621467A7E00B3B7C9 /* TimeFormat.swift in Sources */,
+				19BAC96A2144D84B003FC817 /* PlaylistViewController.swift in Sources */,
+				56D7B3A521DDB79B0040C890 /* UIImageColors.swift in Sources */,
+				190B5FC521467A7E00B3B7C9 /* TrackTool.swift in Sources */,
+				19BAC96F2144D84B003FC817 /* ViewController.swift in Sources */,
+				19BAC96E2144D84B003FC817 /* SongServerViewController.swift in Sources */,
+				19BAC9702144D84B003FC817 /* SettingsViewController.swift in Sources */,
+				569B636E220028BD009063B5 /* AlbumDetailsViewController.swift in Sources */,
+				569B637522006307009063B5 /* StrechView.swift in Sources */,
+				1960268C214648200027E3C7 /* TrackMessage.swift in Sources */,
+				56E50E1622071F7400C46ED9 /* Playlist.swift in Sources */,
+				56E50E18220724F700C46ED9 /* PlaylistTool.swift in Sources */,
+				56E50E1A2207319800C46ED9 /* PlaylistCreationViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -278,37 +480,46 @@
 		};
 		190EF3FC2143D697000EC0F0 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 08B14EAA54C5F4FCB498A6FF /* Pods-abtest.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7N4RCPJ386;
+				DEVELOPMENT_TEAM = 9YJEAPX976;
 				INFOPLIST_FILE = abtest/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.nicat.abtest;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nicat.Player;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
 		190EF3FD2143D697000EC0F0 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E334CF63368A366437ABF972 /* Pods-abtest.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 7N4RCPJ386;
+				DEVELOPMENT_TEAM = 9YJEAPX976;
 				INFOPLIST_FILE = abtest/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.nicat.abtest;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nicat.Player;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

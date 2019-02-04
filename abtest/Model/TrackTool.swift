@@ -13,15 +13,25 @@ let trackFinish = "trackFinish"
 
 class TrackTool: NSObject , AVAudioPlayerDelegate{
     var trackPlayer: AVAudioPlayer?
+    var isShuffled = false
+    var isRepeated = false
+    var isHidden = true
     static let shareInstance = TrackTool()
     var track: TrackMessage = TrackMessage()
-    var tracks: [Track] = [Track]()
+    var tracks = [Track]()
+    
+    var playlist: [Track] = [Track]()
+    
     var trackIndex = -1 {
         didSet {
-            if trackIndex < 0 {
-                trackIndex = tracks.count - 1
+            if trackIndex < 0
+            {
+                print("aa")
+                trackIndex = 0
             }
-            if trackIndex > tracks.count - 1 {
+            if trackIndex > playlist.count - 1
+            {
+                print("bb")
                 trackIndex = 0
             }
         }
@@ -41,28 +51,42 @@ class TrackTool: NSObject , AVAudioPlayerDelegate{
         }
     }
     
-    func getTrackMessage() -> TrackMessage {
-        track.trackModel = tracks[trackIndex]
-        track.currentTime = (trackPlayer?.currentTime) ?? 0
-        track.totalTime = (trackPlayer?.duration) ?? 0
-        track.isPlaying = (trackPlayer?.isPlaying) ?? false
-        return track
+
+    
+    func getTrackMessage() -> TrackMessage
+    {
+        
+        if (trackIndex >= 0)
+        {
+            guard let temtrack = playlist[exist: trackIndex] else { return track}
+            track.trackModel = temtrack
+            track.currentTime = (trackPlayer?.currentTime) ?? 0
+            track.totalTime = (trackPlayer?.duration) ?? 0
+            track.isPlaying = (trackPlayer?.isPlaying) ?? false
+            
+            return track
+        }else
+        {
+            return track
+        }
+        
     }
     
     // MARK - Track Tools
     func playTrack(track : Track) {
-        guard let path = Bundle.main.url(forResource: track.fileName, withExtension: nil) else {
+        let ab = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
+        let url = NSURL(fileURLWithPath: ab)
+        
+        guard let path = url.appendingPathComponent(track.fileName + ".mp3") else {
             return
         }
-        print("Test Refresh: \(track.fileName)")
-        trackIndex = tracks.index(of: track)!
-        // Skip if the track is playing
+        trackIndex = playlist.index(of: track)!
         if trackPlayer?.url == path {
             trackPlayer?.play()
             
             return
         }
-        //2 根据路径创建播放器 因为AVAudioPlayer 需要thorw 穿透
+        
         do {
             trackPlayer = try AVAudioPlayer(contentsOf: path)
             trackPlayer?.delegate = self
@@ -70,36 +94,105 @@ class TrackTool: NSObject , AVAudioPlayerDelegate{
             print(error)
             return
         }
-
         trackPlayer?.prepareToPlay()
         trackPlayer?.play()
+        
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "updatePlayer"), object: nil)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "updateIcon"), object: nil)
         setupLockScreen()
     }
     
-    func playCurrnetTrack () {
-        let track = tracks[trackIndex]
+    func playCurrnetTrack ()
+    {
+        print("playCurrent indexTrack: ",trackIndex)
+        if(trackIndex >= 0)
+        {
+            if let track = playlist[exist: trackIndex]
+            {
+                playTrack(track: track)
+                setupLockScreen()
+            }
+        }
+        else{
+            return
+        }
+    }
+    //shufle track list
+    func shuffleList()
+    {
+        isShuffled = true
+        playlist.shuffle()
+        trackIndex = Int(arc4random()) % (playlist.count)
+        let track = playlist[trackIndex]
         playTrack(track: track)
         setupLockScreen()
     }
     
+    //sort list from current song
+    func sortList()
+    {
+        isShuffled = false
+        playlist = playlist.sorted { $0.fileName < $1.fileName }
+        let track = playlist[trackIndex]
+        playTrack(track: track)
+        setupLockScreen()
+    }
+    
+    func stop(){
+        trackPlayer?.stop()
+        stopLockScreen()
+    }
+    //find current index in tracks array
+    func findCurrentTrackIndex() -> Int
+    {
+        return playlist.firstIndex(of: track.trackModel!)!
+    }
+    
+    //replay current song
+    func playCurrentTrackAgain()
+    {
+        trackPlayer?.currentTime = 0.0
+    }
+    
+    //pause track
     func pauseTrack() -> () {
         trackPlayer?.pause()
         setupLockScreen()
     }
-    
-    func nextTrack() {
+    //Play next track
+    func nextTrack()
+    {
         trackIndex += 1
-        let track = tracks[trackIndex]
+        let track = playlist[trackIndex]
         playTrack(track: track)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "updatePlayer"), object: nil)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "updateIcon"), object: nil)
         setupLockScreen()
     }
-    
+    //Play previous track
     func previousTrack() {
         trackIndex -= 1
-        let track = tracks[trackIndex]
+        let track = playlist[trackIndex]
         playTrack(track: track)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "updatePlayer"), object: nil)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "updateIcon"), object: nil)
         setupLockScreen()
     }
+    
+    //activate repeat button
+    func activateRepeat()
+    {
+            isRepeated = true
+            trackPlayer?.numberOfLoops = -1
+        setupLockScreen()
+    }
+    //deactivate repeat button
+    func deactiveRepeat()
+        {
+            isRepeated = false
+            trackPlayer?.numberOfLoops = 0
+            setupLockScreen()
+        }
     
     func setProgress(currentProgress : CGFloat) {
         let progress = (trackPlayer?.currentTime)! / (trackPlayer?.duration)!
@@ -113,33 +206,81 @@ class TrackTool: NSObject , AVAudioPlayerDelegate{
     }
     
     func setButtonImage(button: UIButton) {
-        //let track = TrackTool.shareInstance.getTrackMessage()
+        let track = TrackTool.shareInstance.getTrackMessage()
         
         if track.isPlaying {
-            return button.setImage(UIImage(named: "pausebtn"), for: .normal)
+            return button.setBackgroundImage(UIImage(named: "Pause"), for: .normal)
         } else {
-           return button.setImage(UIImage(named: "playbtn"), for: .normal)
+            return button.setBackgroundImage(UIImage(named: "play-button"), for: .normal)
         }
     }
     
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: trackFinish), object: self, userInfo: nil)
     }
+    
+    func setupShuffleButton(button: UIButton){
+        UIView.animate(withDuration: 0.3, animations: {
+            if(button.backgroundColor == UIColor.black)
+            {
+                button.imageView?.tintColor = .black
+               button.layer.borderColor = UIColor.white.cgColor
+               button.backgroundColor = nil
+                TrackTool.shareInstance.sortList()
+            }
+            else
+            {
+                button.adjustsImageWhenHighlighted = false
+                button.backgroundColor = UIColor.black
+                button.imageView?.tintColor = .white
+                button.layer.cornerRadius = 5
+                button.layer.borderWidth = 1
+                button.layer.borderColor = UIColor.black.cgColor
+                TrackTool.shareInstance.shuffleList()
+            }
+        })
+    }
+    func setupRepeatButton(button: UIButton)
+    {
+        UIView.animate(withDuration: 0.3, animations: {
+            if(button.backgroundColor == UIColor.black)
+            {
+                button.imageView?.tintColor = .black
+                button.layer.borderColor = UIColor.white.cgColor
+                button.backgroundColor = nil
+                TrackTool.shareInstance.deactiveRepeat()
+            }
+            else
+            {
+                button.adjustsImageWhenHighlighted = false
+                button.backgroundColor = UIColor.black
+                button.imageView?.tintColor = .white
+                button.layer.cornerRadius = 5
+                button.layer.borderWidth = 1
+                button.layer.borderColor = UIColor.black.cgColor
+                TrackTool.shareInstance.activateRepeat()
+            }
+        })
+    }
 }
+
+
+
+
 
 extension TrackTool {
     func setupLockScreen() {
         let lockMsg = getTrackMessage()
         let centerInfo = MPNowPlayingInfoCenter.default()
         
-        let title = lockMsg.trackModel?.title ?? ""
         let artist = lockMsg.trackModel?.artist ?? ""
         var image: UIImage
-        
-        if lockMsg.trackModel?.artwork == nil {
+        let fileName = lockMsg.trackModel?.fileName ?? ""
+        if lockMsg.trackModel?.album == "Unknown"
+        {
             image = UIImage(named: "artwork")!
         } else {
-            image = UIImage(data: (lockMsg.trackModel?.artwork)!)!
+            image = loadImageFromDiskWith(fileName: lockMsg.trackModel!.fileName)!
         }
         
         let artwork = MPMediaItemArtwork.init(boundsSize: (image.size), requestHandler: { (size) -> UIImage in
@@ -155,14 +296,17 @@ extension TrackTool {
         }
         
         centerInfo.nowPlayingInfo = [
-            MPMediaItemPropertyTitle: title,
+            MPMediaItemPropertyTitle: fileName,
             MPMediaItemPropertyArtist: artist,
             MPMediaItemPropertyArtwork: artwork,
             MPNowPlayingInfoPropertyElapsedPlaybackTime: currentTime,
             MPMediaItemPropertyPlaybackDuration: totalTime,
             MPNowPlayingInfoPropertyPlaybackRate: playRate
         ]
-
+        
         UIApplication.shared.beginReceivingRemoteControlEvents()
+    }
+    func stopLockScreen(){
+        UIApplication.shared.endReceivingRemoteControlEvents()
     }
 }

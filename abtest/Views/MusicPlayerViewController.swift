@@ -331,6 +331,7 @@ class MusicPlayerViewController: UIViewController {
             TrackTool.shareInstance.playCurrnetTrack()
             playButton.isEnabled = true
         }
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "updateIcon"), object: nil)
         updateView()
     }
    
@@ -376,10 +377,14 @@ class MusicPlayerViewController: UIViewController {
         fileName.text = track.trackModel?.fileName
         
         
-        if track.trackModel?.artwork == nil {
-            musicArtwork.image = #imageLiteral(resourceName: "artwork")
-        } else {
-            musicArtwork.image = UIImage(data: (track.trackModel?.artwork)!)
+        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+        let fileURL = documentsDirectory.appendingPathComponent("artwork/" + (track.trackModel?.fileName)!)
+        if FileManager.default.fileExists(atPath: fileURL.path)
+        {
+            musicArtwork.image = loadImageFromDiskWith(fileName: (track.trackModel?.fileName)!)
+        }
+        else{
+            musicArtwork.image = UIImage(named: "artwork")
         }
     }
 

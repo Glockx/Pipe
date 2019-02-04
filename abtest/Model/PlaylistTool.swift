@@ -7,3 +7,9 @@
 //
 
 import Foundation
+import UIKit
+
+class PlaylistTool: NSObject
+{
+    static let shareInstance = PlaylistTool()
+}

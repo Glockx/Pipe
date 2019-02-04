@@ -12,8 +12,6 @@ import MarqueeLabel
 import ViewAnimator
 
 
-
-
 class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDataSource {
 
 
@@ -25,7 +23,6 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
     var timer = Timer()
     var observerAdded = false
     var firstTime = true
-    var isHidden = true
     let cellReuseIdentifier = "SongCell"
     var tracks = [Track]()
     var documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
@@ -37,10 +34,8 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
         tableView.dataSource = self
         tableView.delegate = self
      
-         loadTracks()
-    
-        //change statusbar color back to original
-        print("FirstTime:", firstTime)
+            self.loadTracks()
+        
         
 
         if #available(iOS 11, *) {
@@ -58,17 +53,23 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
     {
         super.viewWillAppear(animated)
         NotificationCenter.default.addObserver(self, selector: #selector(playnext), name: NSNotification.Name(rawValue: trackFinish), object: nil)
+        if TrackTool.shareInstance.isHidden
+        {
+            self.tableViewBottom.constant = 0
+            self.view.layoutSubviews()
+        }
+        else
+        {
+            UIView.animate(withDuration: 0.3, animations:
+                {
+                    self.tableViewBottom.constant = -67
+                    self.view.layoutSubviews()
+            })
+        }
         NotificationCenter.default.post(name: Notification.Name(rawValue: "updatePlayer"), object: nil)
         NotificationCenter.default.post(name: Notification.Name(rawValue: "updateIcon"), object: nil)
-        print("Music Finished Observer added")
-        if !firstTime {
-            print("viewWillAppaer")
-            
-        }
         UIApplication.shared.statusBarView?.backgroundColor = .white
         tracks.sort { $0.fileName < $1.fileName}
-    
-        
     }
     
     
@@ -77,40 +78,12 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
     TrackTool.shareInstance.nextTrack()
     }
     
-    @objc func loadTrack()
-    {
-    print("salam")
-    }
-    
     //listing tracks from documents folder
     @objc func loadTracks() {
-        tracks.removeAll()
-        TrackModel.getTracks { (tracksData: [Track]) in
-            //print(tracksData)
-            print("tracksData count: \(tracksData.count)")
 
-            for track in tracksData
-            {
-                if tracks.contains(where: { $0.fileName == track.fileName }) {
-
-                    //print("it contains: \(track.fileName)")
-                } else {
-                    tracks.append(track)
-                   // print("it dosen't contains: \(track.fileName)")
-                }
-
-                //let t = tracksData[2]
-                //print("Name: \(t.title), Artist: \(t.artist)")
-                
-            }
-          
-        }
-        TrackTool.shareInstance.tracks = tracks.sorted { $0.fileName < $1.fileName }
-        self.tableView.reloadData()
-
+        tracks = TrackTool.shareInstance.tracks.sorted { $0.album < $1.album}
+       tableView.reloadData()
     }
-    
- 
     
     //number of table cells
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
@@ -143,10 +116,14 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
         self.present(vc, animated: true, completion:
             {
             self.timer.invalidate()
-            TrackTool.shareInstance.pauseTrack()
+                if TrackTool.shareInstance.trackPlayer?.isPlaying ?? false{
+                    TrackTool.shareInstance.pauseTrack()
+                }
+            
             TrackTool.shareInstance.tracks.removeAll()
             NotificationCenter.default.post(name: Notification.Name(rawValue: "hidePlayerWithAnimation"), object: nil)
-                self.isHidden = false
+            
+            TrackTool.shareInstance.isHidden = true
             self.firstTime = true
             self.tableViewBottom.constant = 0
             self.tableView.layoutIfNeeded()
@@ -168,11 +145,27 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
     {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SongCell") as! SongCell
         let track = tracks[indexPath.section]
-        DispatchQueue.main.async {
-            cell.cellimageView.image = UIImage(data: track.artwork!)
+        DispatchQueue.main.async
+        {
+            guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+            let fileURL = documentsDirectory.appendingPathComponent("artwork/" + track.fileName)
+
+            if FileManager.default.fileExists(atPath: fileURL.path)
+            {
+                let image = loadImageFromDiskWith(fileName: track.fileName)
+//                let imagesize = image?.size
+//                UIGraphicsBeginImageContext(imagesize!)
+//                image?.draw(in: CGRect(x: 0, y: 0, width: imagesize?.width ?? 0.0, height: imagesize?.height ?? 0.0))
+//                image = UIGraphicsGetImageFromCurrentImageContext()
+//                UIGraphicsEndImageContext();
+                cell.cellimageView.image = image
+            }
+            else{
+                cell.cellimageView.image = UIImage(named: "artwork")
+            }
+            
+            
         }
-        //cell.trackTitle.minimumScaleFactor = 0.5
-       // cell.trackTitle.adjustsFontSizeToFitWidth = true
         cell.trackTitle.text = track.fileName
         return cell
     }
@@ -184,43 +177,77 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]?
     {
-        // action one
+        // =================== Delete Action ==========================
         let deleteAction = UITableViewRowAction(style: .default, title: "Delete", handler: { (action, indexPath) in
-            tableView.beginUpdates()
-            
-            let track = self.tracks[indexPath.section]
-            self.removeImageLocalPath(localPathName: track.fileName + ".mp3")
-            
-            self.tracks.remove(at: indexPath.section)
-            let indexSet = IndexSet(arrayLiteral: indexPath.section)
-            self.tableView.deleteSections(indexSet, with: .fade)
-            tableView.endUpdates()
-            TrackTool.shareInstance.tracks = self.tracks
-            DispatchQueue.main.async {
+            UIView.performWithoutAnimation {
+                 tableView.beginUpdates()
+                //currently selected track from table list
+                let track = self.tracks[indexPath.section]
+                //remove track file from documents
+                self.removeImageLocalPath(localPathName: track.fileName + ".mp3")
+                self.removeImageLocalPath(localPathName: track.fileName)
+                //remove track from track list
+                self.tracks.remove(at: indexPath.section)
                 
-                if !self.isHidden
+                // !IMPORTANT: It's should be checked that removed track is last track of array for restarting index array to first item in the list otherwise it won't play first song in the list (Dont't remove this line)
+                if self.tracks.endIndex == indexPath.section
                 {
-                    let track = TrackTool.shareInstance.getTrackMessage().trackModel
+                    print("last track")
+                    TrackTool.shareInstance.trackIndex = 0
+                }
+                //getting section of currently selected track from table list
+                let indexSet = IndexSet(arrayLiteral: indexPath.section)
+                // remove section from tableView
+                self.tableView.deleteSections(indexSet, with: .fade)
+                
+                //reload tracks array with new song list
+                TrackTool.shareInstance.tracks = self.tracks
+                TrackTool.shareInstance.playlist = self.tracks
+                //reload table
+               
+                
+                tableView.endUpdates()
+                
+                //First,checking that if miniPlayer is hidden for not playing song automaticlly
+                if !TrackTool.shareInstance.isHidden
+                {
+                    //Getting the file path of currently playing song from Media Player for checking that is removed song being playing in the background
+                    let musicPlayerCurrentSong = TrackTool.shareInstance.trackPlayer?.url
+                    // Getting the file path of track from tableView
+                    let indexPathCurrentSong = self.getFilePath(track: track)
                     
-                       NotificationCenter.default.post(name: Notification.Name(rawValue: "updatePlayer"), object: nil)
+                    //Checking that Removed song is playing in the background
+                    if(musicPlayerCurrentSong == indexPathCurrentSong)
+                    {
+                        // If track is playing, move to next song on the list, else don't
+                        if (TrackTool.shareInstance.trackPlayer?.isPlaying)!
+                        {
+                            TrackTool.shareInstance.playCurrnetTrack()
+                        }
+                        // Update MiniPlayer
                         NotificationCenter.default.post(name: Notification.Name(rawValue: "updatePlayer"), object: nil)
-                        TrackTool.shareInstance.playTrack(track: track!)
+                        NotificationCenter.default.post(name: Notification.Name(rawValue: "updateIcon"), object: nil)
                     }
                     else
                     {
-                      NotificationCenter.default.post(name: Notification.Name(rawValue: "hidePlayerWithAnimation"), object: nil)
-                        self.isHidden = true
-                        self.firstTime = true
-                        self.tableViewBottom.constant = 0
-                        self.tableView.layoutIfNeeded()
+                        // Getting trackIndex of currently playing song in the background
+                        let aa = TrackTool.shareInstance.findCurrentTrackIndex()
+                        // Assigning grabed trackIndex to main trackIndex
+                        TrackTool.shareInstance.trackIndex = aa
                     }
-            
+                }
+                
+                // Reload Album List
                 NotificationCenter.default.post(name: Notification.Name(rawValue: "AlbumLoadTrack"), object: nil)
-                self.tableView.reloadData()
+                // Save changes to documents
+                let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+                let ArchiveURL = DocumentsDirectory.appendingPathComponent("Tracks")
+                NSKeyedArchiver.archiveRootObject(TrackTool.shareInstance.tracks, toFile: ArchiveURL.path)
             }
         })
         deleteAction.backgroundColor = UIColor(red:0.94, green:0.20, blue:0.20, alpha:1.0)
         
+        // =================== Rename Action ==========================
         let editAction = UITableViewRowAction(style: .default, title: "Rename", handler: { (action, indexPath) in
             let track = self.tracks[indexPath.section]
             let alert = UIAlertController(title: nil, message: "Please input track name.", preferredStyle: UIAlertControllerStyle.alert)
@@ -232,6 +259,7 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
                 (alertAction) in
                 let textField = alert.textFields![0] as UITextField
                 self.renameFileLocalPath(originalName: track.fileName + ".mp3", newName: textField.text! + ".mp3")
+                self.renameFileLocalPath(originalName: track.fileName, newName: textField.text!)
                 track.fileName = textField.text!
                 
                 
@@ -257,9 +285,9 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
             alert.addAction(action)
             alert.addAction(cancel)
             self.present(alert, animated:true, completion: nil)
-            
-            tableView.beginUpdates()
-            tableView.endUpdates()
+            let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+            let ArchiveURL = DocumentsDirectory.appendingPathComponent("Tracks")
+            NSKeyedArchiver.archiveRootObject(TrackTool.shareInstance.tracks, toFile: ArchiveURL.path)
         })
         editAction.backgroundColor = UIColor(red:0.00, green:0.48, blue:1.00, alpha:1.0)
         
@@ -267,7 +295,16 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     
-    
+    func getFilePath(track: Track) -> URL{
+        let ab = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
+        let url = NSURL(fileURLWithPath: ab)
+        
+        guard let path = url.appendingPathComponent(track.fileName + ".mp3") else
+        {
+            return URL(string: "")!
+        }
+        return path
+    }
     //remove file function
     func removeImageLocalPath(localPathName: String) {
         let filemanager = FileManager.default
@@ -278,7 +315,7 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
         }
         catch { print("Not Deleted") }
     }
-
+    //rename file
     func renameFileLocalPath(originalName: String, newName: String){
         let filemanager = FileManager.default
         let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString
@@ -301,15 +338,24 @@ extension FilesViewController {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
+        
         tableView.deselectRow(at: indexPath, animated: true)
+    
+        
+        TrackTool.shareInstance.playlist.removeAll()
+        TrackTool.shareInstance.playlist = tracks
         let track = tracks[indexPath.section]
+        
         TrackTool.shareInstance.playTrack(track: track)
-       
+        print("tableIndexPath: ", indexPath.section)
         let appDelegate: AppDelegate? = UIApplication.shared.delegate as? AppDelegate
         appDelegate?.tryToDrawOnTheWindow()
-        NotificationCenter.default.post(name: Notification.Name(rawValue: "updatePlayer"), object: nil)
-        NotificationCenter.default.post(name: Notification.Name(rawValue: "updateIcon"), object: nil)
-
+        
+        if (TrackTool.shareInstance.trackPlayer?.isPlaying)! && TrackTool.shareInstance.isHidden
+        {
+            NotificationCenter.default.post(name: Notification.Name(rawValue: "showPlayer"), object: nil)
+        }
+        
         if firstTime {
           
             
@@ -317,9 +363,12 @@ extension FilesViewController {
                 self.tableViewBottom.constant = -67
                 self.view.layoutIfNeeded()
             })
+            
             self.firstTime = false
-             NotificationCenter.default.post(name: Notification.Name(rawValue: "showPlayer"), object: nil)
-            isHidden = false
+            NotificationCenter.default.post(name: Notification.Name(rawValue: "showPlayer"), object: nil)
+            NotificationCenter.default.post(name: Notification.Name(rawValue: "updatePlayer"), object: nil)
+            NotificationCenter.default.post(name: Notification.Name(rawValue: "updateIcon"), object: nil)
+            TrackTool.shareInstance.isHidden = false
         }
     }
     

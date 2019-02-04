@@ -9,14 +9,14 @@
 import UIKit
 
 class TimeFormat: NSObject {
-     class func getFormatTime(timerInval : TimeInterval) -> String {
+    class func getFormatTime(timerInval : TimeInterval) -> String {
         
         let min = Int(timerInval) / 60
         let sec = Int(timerInval) % 60
         return String(format: "%d:%02d", min, sec)
     }
     
-     class func getFormatTimeToTimeInval(format : String) -> TimeInterval {
+    class func getFormatTimeToTimeInval(format : String) -> TimeInterval {
         let data = format.components(separatedBy: ":")
         if data.count != 2 {
             return 0

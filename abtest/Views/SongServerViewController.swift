@@ -8,10 +8,11 @@
 
 import UIKit
 import GCDWebServer
-import Alamofire
-class SongServerViewController: UIViewController {
-    @IBOutlet weak var LinkField: UITextField!
+
+class SongServerViewController: UIViewController
+{
     
+    @IBOutlet weak var LinkField: UITextField!
     @IBOutlet weak var progressLabel: UILabel!
     var davServer: GCDWebServer?
     var documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
@@ -40,42 +41,55 @@ class SongServerViewController: UIViewController {
         
     }
     
+    var filePath: String {
+        //1 - manager lets you examine contents of a files and folders in your app; creates a directory to where we are saving it
+        let manager = FileManager.default
+        //2 - this returns an array of urls from our documentDirectory and we take the first path
+        let url = manager.urls(for: .documentDirectory, in: .userDomainMask).first
+        print("this is the url path in the documentDirectory \(String(describing: url))")
+        //3 - creates a new path component and creates a new file called "Data" which is where we will store our Data array.
+        return (url!.appendingPathComponent("Data").path)
+    }
+    
+    private func saveData()
+    {
+        let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+        let ArchiveURL = DocumentsDirectory.appendingPathComponent("Tracks")
+        
+        NSKeyedArchiver.archiveRootObject(TrackTool.shareInstance.tracks, toFile: ArchiveURL.path)
+    }
+    
+    func loadSongs(handleComplete:(()->()))
+    {
+       
+        TrackTool.shareInstance.tracks.removeAll()
+        TrackModel.getTracks { (tracksData: [Track]) in
+            for track in tracksData
+            {
+                if TrackTool.shareInstance.tracks.contains(where: { $0.fileName == track.fileName })
+                {
+                    
+                }
+                else
+                {
+                    TrackTool.shareInstance.tracks.append(track)
+                }
+            }
+        }
+        handleComplete()
+    }
+    
     @IBAction func TransferDone(_ sender: Any)
     {
         davServer?.stop()
+        loadSongs(handleComplete: saveData)
+        
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "loadtracks"), object: nil)
+       NotificationCenter.default.post(name: Notification.Name(rawValue: "AlbumLoadTrack"), object: nil)
         dismiss(animated: true, completion: nil)
     }
     
-    @IBAction func downloadPressed(_ sender: Any)
-    {
-       
-        startDownload(audioUrl: LinkField.text!)
-    }
-    
-    
-    func startDownload(audioUrl:String) -> Void {
-        let fileUrl = self.getSaveFileUrl(fileName: audioUrl)
-        let destination: DownloadRequest.DownloadFileDestination = { _, _ in
-            return (fileUrl, [.removePreviousFile, .createIntermediateDirectories])
-        }
-        
-        Alamofire.download(audioUrl, to:destination)
-            .downloadProgress { (progress) in
-                self.progressLabel.text = (String)(progress.fractionCompleted.nextDown)
-            }
-            .responseData { (data) in
-                self.progressLabel.text = "Completed!"
-        }
-    }
-   
-    
-    func getSaveFileUrl(fileName: String) -> URL {
-        let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let nameUrl = URL(string: fileName)
-        let fileURL = documentsURL.appendingPathComponent((nameUrl?.lastPathComponent)!)
-        NSLog(fileURL.absoluteString)
-        return fileURL;
-    }
+
     
 }
 
