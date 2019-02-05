@@ -168,7 +168,7 @@ class AlbumsViewController: UIViewController,UITableViewDelegate,UITableViewData
             let album = trackuniqe[indexPath.section]
             
             // grabbing album tracks from local track list
-            var AlbumTracks = self.tracks.filter{$0.album == album.album}
+            let AlbumTracks = self.tracks.filter{$0.album == album.album}
             
             // removing each track with album artwork
             AlbumTracks.forEach{ element in

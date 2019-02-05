@@ -27,6 +27,7 @@
 		19BAC972214516C8003FC817 /* if_business_economic_finance_interprise_company_search_2570301.png in Resources */ = {isa = PBXBuildFile; fileRef = 19BAC971214516C7003FC817 /* if_business_economic_finance_interprise_company_search_2570301.png */; };
 		524670F91CCFA25E1087AE36 /* Pods_abtest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCA82E8A858ACC80E2C18238 /* Pods_abtest.framework */; };
 		563E3F3C2149158600F05B16 /* MusicPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563E3F3B2149158600F05B16 /* MusicPlayerViewController.swift */; };
+		568DAABB220866830096D514 /* SongListForPlaylistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 568DAABA220866830096D514 /* SongListForPlaylistViewController.swift */; };
 		56959D2321FB549B0071F71B /* MiniPlayerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 56959D2221FB549B0071F71B /* MiniPlayerView.xib */; };
 		56959D2521FB54C40071F71B /* MiniPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56959D2421FB54C40071F71B /* MiniPlayerView.swift */; };
 		569B636E220028BD009063B5 /* AlbumDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 569B636D220028BD009063B5 /* AlbumDetailsViewController.swift */; };
@@ -34,7 +35,6 @@
 		569B637522006307009063B5 /* StrechView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 569B637422006307009063B5 /* StrechView.swift */; };
 		569B637722006E6A009063B5 /* 1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 569B637622006E69009063B5 /* 1.jpg */; };
 		56CDE1FB219C30E400562E56 /* _free-icons_png_512_2570314.png in Resources */ = {isa = PBXBuildFile; fileRef = 56CDE1FA219C30E400562E56 /* _free-icons_png_512_2570314.png */; };
-		56D7B3A521DDB79B0040C890 /* UIImageColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56D7B3A421DDB79B0040C890 /* UIImageColors.swift */; };
 		56E50E1622071F7400C46ED9 /* Playlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E50E1522071F7400C46ED9 /* Playlist.swift */; };
 		56E50E18220724F700C46ED9 /* PlaylistTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E50E17220724F700C46ED9 /* PlaylistTool.swift */; };
 		56E50E1A2207319800C46ED9 /* PlaylistCreationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E50E192207319800C46ED9 /* PlaylistCreationViewController.swift */; };
@@ -63,6 +63,7 @@
 		19BAC9692144D84B003FC817 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		19BAC971214516C7003FC817 /* if_business_economic_finance_interprise_company_search_2570301.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = if_business_economic_finance_interprise_company_search_2570301.png; sourceTree = "<group>"; };
 		563E3F3B2149158600F05B16 /* MusicPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayerViewController.swift; sourceTree = "<group>"; };
+		568DAABA220866830096D514 /* SongListForPlaylistViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongListForPlaylistViewController.swift; sourceTree = "<group>"; };
 		56959D2221FB549B0071F71B /* MiniPlayerView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MiniPlayerView.xib; sourceTree = "<group>"; };
 		56959D2421FB54C40071F71B /* MiniPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerView.swift; sourceTree = "<group>"; };
 		569B636D220028BD009063B5 /* AlbumDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumDetailsViewController.swift; sourceTree = "<group>"; };
@@ -70,7 +71,6 @@
 		569B637422006307009063B5 /* StrechView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrechView.swift; sourceTree = "<group>"; };
 		569B637622006E69009063B5 /* 1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1.jpg; sourceTree = "<group>"; };
 		56CDE1FA219C30E400562E56 /* _free-icons_png_512_2570314.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "_free-icons_png_512_2570314.png"; sourceTree = "<group>"; };
-		56D7B3A421DDB79B0040C890 /* UIImageColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageColors.swift; sourceTree = "<group>"; };
 		56E50E1522071F7400C46ED9 /* Playlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Playlist.swift; sourceTree = "<group>"; };
 		56E50E17220724F700C46ED9 /* PlaylistTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistTool.swift; sourceTree = "<group>"; };
 		56E50E192207319800C46ED9 /* PlaylistCreationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistCreationViewController.swift; sourceTree = "<group>"; };
@@ -132,7 +132,6 @@
 				190EF40D2144367F000EC0F0 /* Extensions.swift */,
 				190EF40B21442E27000EC0F0 /* if_business_economic_finance_interprise_company_browser_2570326.png */,
 				19BAC971214516C7003FC817 /* if_business_economic_finance_interprise_company_search_2570301.png */,
-				56D7B3A421DDB79B0040C890 /* UIImageColors.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -172,6 +171,7 @@
 				56E50E192207319800C46ED9 /* PlaylistCreationViewController.swift */,
 				19BAC9632144D84B003FC817 /* PlaylistViewController.swift */,
 				19BAC9692144D84B003FC817 /* SettingsViewController.swift */,
+				568DAABA220866830096D514 /* SongListForPlaylistViewController.swift */,
 				19BAC9672144D84B003FC817 /* SongServerViewController.swift */,
 				569B637422006307009063B5 /* StrechView.swift */,
 				19BAC9682144D84B003FC817 /* ViewController.swift */,
@@ -327,8 +327,8 @@
 				190EF3ED2143D692000EC0F0 /* AppDelegate.swift in Sources */,
 				19BAC96C2144D84B003FC817 /* FilesViewController .swift in Sources */,
 				190B5FC621467A7E00B3B7C9 /* TimeFormat.swift in Sources */,
+				568DAABB220866830096D514 /* SongListForPlaylistViewController.swift in Sources */,
 				19BAC96A2144D84B003FC817 /* PlaylistViewController.swift in Sources */,
-				56D7B3A521DDB79B0040C890 /* UIImageColors.swift in Sources */,
 				190B5FC521467A7E00B3B7C9 /* TrackTool.swift in Sources */,
 				19BAC96F2144D84B003FC817 /* ViewController.swift in Sources */,
 				19BAC96E2144D84B003FC817 /* SongServerViewController.swift in Sources */,
