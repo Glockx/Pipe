@@ -7,16 +7,22 @@
 //
 
 import UIKit
+import AVFoundation
+import NotificationBannerSwift
 
-class PlaylistCreationViewController: UIViewController,UIImagePickerControllerDelegate,UINavigationControllerDelegate, UITableViewDelegate, UITableViewDataSource{
-
+class PlaylistCreationViewController: UIViewController,UIImagePickerControllerDelegate,UINavigationControllerDelegate, UITableViewDelegate, UITableViewDataSource
+{
     @IBOutlet weak var tableView: IntrinsicTableView!
     @IBOutlet weak var playlistName: UITextField!
     @IBOutlet weak var imageChangeButton: UIButton!
     @IBOutlet weak var playlistImage: UIImageView!
+    
+    var playlistInit: Playlist? = nil
     var passedTracks = [Track]()
     let picker = UIImagePickerController()
-    override func viewDidLoad() {
+    
+    override func viewDidLoad()
+    {
         super.viewDidLoad()
         
         //image picker delegate
@@ -25,39 +31,94 @@ class PlaylistCreationViewController: UIViewController,UIImagePickerControllerDe
         tableView.delegate = self
         tableView.dataSource = self
         
+        tableView.isEditing = true
+        tableView.remembersLastFocusedIndexPath = true
         //customize playlist textfiled style
         playlistName.setBottomBorder(withColor: .lightGray)
+        self.hideKeyboardWhenTappedAround()
     }
-
+    
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(true)
         UIApplication.shared.statusBarView?.backgroundColor = .white
+        tableView.reloadData()
     }
     
-    override func viewDidAppear(_ animated: Bool)
+    
+    @IBAction func savePlaylist(_ sender: Any)
     {
         
-        //viewHeight.constant = tableView.frame.size.height + (5 * 44)  
-//        containerbOTTOM.constant = tableView.contentSize.height
-//        view.layoutSubviews()
-        super.viewDidAppear(true)
+        if playlistName.text!.isEmpty || passedTracks.isEmpty
+        {
+            if (playlistName.text?.isEmpty)! {
+                let banner = StatusBarNotificationBanner(title: "Playlist Title Is Missing",style: .warning)
+                banner.show()
+            }else if passedTracks.isEmpty
+            {
+                let banner = StatusBarNotificationBanner(title: "Please Add Song To The Playlist",style: .warning)
+                banner.show()
+            }
+        }
+        else
+        {
+            
+            initPlaylist(handleComplete: saveData)
+            NotificationCenter.default.post(name: Notification.Name(rawValue: "ReloadPlaylistTable"), object: nil)
+            self.dismiss(animated: true, completion: nil)
+        }
     }
     
+    func initPlaylist(handleComplete:(()->()))
+    {
+        
+        // TimeStamp
+        let date = Date()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd.MM.yyyy"
+        let timeStamp = formatter.string(from: date)
+        
+        let uuid = NSUUID().uuidString.lowercased()
+        if playlistImage.image != nil
+        {
+            saveImage(imageName: "pl-ls" + String(passedTracks.count) + playlistName.text!, image: playlistImage.image!)
+        }
+        
+        
+        //Get total time of songs in the list
+        let totalTime = calculateTotalTime(tracks: passedTracks)
+        
+        playlistInit = Playlist.init(name: playlistName.text!, songCount: passedTracks.count, tracks: passedTracks, artwork: nil, createdDay: timeStamp, totalTime: totalTime,uuid : uuid)
+        PlaylistTool.shareInstance.playlists.append(playlistInit!)
+        dump(PlaylistTool.shareInstance.playlists)
+        
+        handleComplete()
+    }
     
+    private func saveData()
+    {
+        let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+        let ArchiveURL = DocumentsDirectory.appendingPathComponent("Playlists")
+        
+        NSKeyedArchiver.archiveRootObject(PlaylistTool.shareInstance.playlists, toFile: ArchiveURL.path)
+    }
+
     @IBAction func cancelCreation(_ sender: Any)
     {
-        navigationController?.popViewController(animated: true)
+        self.dismiss(animated: true, completion: nil)
     }
+    
     @IBAction func showSongList(_ sender: Any)
     {
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let newViewController = storyBoard.instantiateViewController(withIdentifier: "SongList") as! SongListForPlaylistViewController
         
+        newViewController.checked = passedTracks
         self.present(newViewController, animated: true, completion:nil)
         
     }
     
+    @IBAction func unwindToVC1(segue:UIStoryboardSegue) {}
     
     // <============================== TableView Setup ==============================>
     
@@ -77,8 +138,41 @@ class PlaylistCreationViewController: UIViewController,UIImagePickerControllerDe
     {
         let cell = tableView.dequeueReusableCell(withIdentifier: "playlistCreationCell") as! PlaylisCreationTableCell
         
+        let tracks = passedTracks[indexPath.section]
+        
+        DispatchQueue.main.async
+            {
+                guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+                let fileURL = documentsDirectory.appendingPathComponent("artwork/" + tracks.fileName)
+                
+                if FileManager.default.fileExists(atPath: fileURL.path)
+                {
+                    let image = loadImageFromDiskWith(fileName: tracks.fileName)
+                    
+                    cell.artwork.image = image
+                }
+                else
+                {
+                    cell.artwork.image = UIImage(named: "artwork")
+                }
+                
+        }
+        cell.trackName.text = tracks.fileName
+        
+        
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath)
+    {
+        
+        let tracks = passedTracks[sourceIndexPath.section]
+        passedTracks.remove(at: sourceIndexPath.section)
+        passedTracks.insert(tracks, at: destinationIndexPath.section)
+        tableView.reloadData()
+        
+    }
+    
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return CGFloat(5)
@@ -92,6 +186,14 @@ class PlaylistCreationViewController: UIViewController,UIImagePickerControllerDe
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat
     {
         return 44
+    }
+    
+     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .none
+    }
+    
+     func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        return false
     }
     
     // <=============================================================================>
@@ -154,9 +256,7 @@ class PlaylistCreationViewController: UIViewController,UIImagePickerControllerDe
     // <=============================================================================>
     
     
-    
-    
-    
+
     // Close keyboaed when click to Done
     @IBAction func done(_ sender: UITextField)
     {
@@ -167,5 +267,11 @@ class PlaylistCreationViewController: UIViewController,UIImagePickerControllerDe
 
 class PlaylisCreationTableCell: UITableViewCell
 {
+    @IBOutlet weak var artwork: UIImageView!
+    @IBOutlet weak var trackName: UILabel!
     
+    
+    override func prepareForReuse() {
+        imageView?.image = nil
+    }
 }

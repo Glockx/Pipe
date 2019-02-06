@@ -15,13 +15,13 @@ class SongListForPlaylistViewController: UIViewController,UITableViewDataSource,
     var tracks = [Track]()
     var searchTrack = [Track]()
     var searching = false
-    var checked: [Track] = []
+    var checked = [Track]()
     
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        //self.hideKeyboardWhenTappedAround()
         tracks =  TrackTool.shareInstance.tracks.sorted { $0.fileName < $1.fileName}
-        dump(tracks)
         tableView.delegate = self
         tableView.dataSource = self
         searchBar.delegate = self
@@ -31,11 +31,13 @@ class SongListForPlaylistViewController: UIViewController,UITableViewDataSource,
     
     @IBAction func DoneAdding(_ sender: Any)
     {
-        let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
-        let newViewController = storyBoard.instantiateViewController(withIdentifier: "PlaylistCreation") as! PlaylistCreationViewController
+        performSegue(withIdentifier: "fuckingUnwind", sender: self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let destVc = segue.destination as! PlaylistCreationViewController
         
-        newViewController.passedTracks = checked
-        dismiss(animated: true, completion: nil)
+        destVc.passedTracks = self.checked
     }
     
     // <================================== tableView Configuration Beginning ================================>
@@ -131,13 +133,10 @@ class SongListForPlaylistViewController: UIViewController,UITableViewDataSource,
             if(!checked.contains(tracks[indexPath.section])){
                 cell.accessoryType = .checkmark
                 checked.append(tracks[indexPath.section])
-                dump(checked)
+                
             }else{
                 cell.accessoryType = .none
                 checked = checked.filter({$0 != tracks[indexPath.section]})
-                dump(checked)
-                
-           
             }
             
         }

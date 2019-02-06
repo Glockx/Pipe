@@ -73,11 +73,13 @@ class TrackTool: NSObject , AVAudioPlayerDelegate{
     }
     
     // MARK - Track Tools
-    func playTrack(track : Track) {
-        let ab = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
-        let url = NSURL(fileURLWithPath: ab)
+    func playTrack(track : Track)
+    {
+        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first  else { return }
+        let fileURL = NSURL(fileURLWithPath: documentsDirectory.appendingPathComponent("tracks/").path)
         
-        guard let path = url.appendingPathComponent(track.fileName + ".mp3") else {
+        
+        guard let path = fileURL.appendingPathComponent(track.fileName + ".mp3") else {
             return
         }
         trackIndex = playlist.index(of: track)!

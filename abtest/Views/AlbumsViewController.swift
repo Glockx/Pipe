@@ -245,7 +245,7 @@ class AlbumsViewController: UIViewController,UITableViewDelegate,UITableViewData
     func removeTrackLocalPath(localPathName: String) {
         let filemanager = FileManager.default
         let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString
-        let destinationPath = documentsPath.appendingPathComponent(localPathName)
+        let destinationPath = documentsPath.appendingPathComponent("tracks/" + localPathName)
         do { try filemanager.removeItem(atPath: destinationPath)
             print("Deleted")
         }
@@ -267,7 +267,7 @@ class AlbumsViewController: UIViewController,UITableViewDelegate,UITableViewData
         let ab = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
         let url = NSURL(fileURLWithPath: ab)
         
-        guard let path = url.appendingPathComponent(track.fileName + ".mp3") else
+        guard let path = url.appendingPathComponent("tracks/" + track.fileName + ".mp3") else
         {
             return URL(string: "")!
         }

@@ -19,9 +19,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
+        let file = URL.createFolder(folderName: "tracks")
+        
+        
         UIApplication.shared.statusBarView?.backgroundColor = UIColor.white
         TrackTool.shareInstance.tracks = loadSongs() ?? TrackTool.shareInstance.tracks
-        
+        PlaylistTool.shareInstance.playlists = loadPlaylists() ?? PlaylistTool.shareInstance.playlists
+        dump(PlaylistTool.shareInstance.playlists)
         #if DEBUG
         Bundle(path: "/Applications/InjectionIII.app/Contents/Resources/iOSInjection10.bundle")?.load()
         #endif
@@ -33,6 +37,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
         let ArchiveURL = DocumentsDirectory.appendingPathComponent("Tracks")
         return NSKeyedUnarchiver.unarchiveObject(withFile: ArchiveURL.path) as? [Track]
+    }
+    
+    func loadPlaylists() -> [Playlist]!
+    {
+        let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+        let ArchiveURL = DocumentsDirectory.appendingPathComponent("Playlists")
+        
+        return NSKeyedUnarchiver.unarchiveObject(withFile: ArchiveURL.path) as? [Playlist]
     }
     
     func tryToDrawOnTheWindow()

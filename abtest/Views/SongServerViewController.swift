@@ -15,7 +15,7 @@ class SongServerViewController: UIViewController
     @IBOutlet weak var LinkField: UITextField!
     @IBOutlet weak var progressLabel: UILabel!
     var davServer: GCDWebServer?
-    var documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
+    var documentsPath = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!.path
     
     @IBOutlet weak var serverLabel: UITextField!
     override func viewDidLoad() {
@@ -31,7 +31,10 @@ class SongServerViewController: UIViewController
     
     func initServer()
     {
-        davServer = GCDWebUploader(uploadDirectory: documentsPath!)
+        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+        let fileURL = documentsDirectory.appendingPathComponent("tracks/").path
+        
+        davServer = GCDWebUploader(uploadDirectory: fileURL)
         
         
         DispatchQueue.main.async {
@@ -88,8 +91,5 @@ class SongServerViewController: UIViewController
        NotificationCenter.default.post(name: Notification.Name(rawValue: "AlbumLoadTrack"), object: nil)
         dismiss(animated: true, completion: nil)
     }
-    
-
-    
 }
 

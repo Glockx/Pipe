@@ -83,10 +83,10 @@ class MusicPlayerViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
     }
     
-    override var preferredStatusBarStyle : UIStatusBarStyle {
-        return .lightContent
-    }
-    
+//    override var preferredStatusBarStyle : UIStatusBarStyle {
+//        return .lightContent
+//    }
+//
    @objc override func viewDidLayoutSubviews() {
     setupViewConstrains()
     }
@@ -100,7 +100,7 @@ class MusicPlayerViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        NotificationCenter.default.addObserver(self, selector: #selector(nextPressed), name: NSNotification.Name(rawValue: trackFinish), object: nil)
+       // NotificationCenter.default.addObserver(self, selector: #selector(nextPressed), name: NSNotification.Name(rawValue: trackFinish), object: nil)
         super.viewWillAppear(animated)
         if TrackTool.shareInstance.getTrackMessage().isPlaying{
             playButton.setBackgroundImage(UIImage(named: "Pause"), for: .normal)
@@ -305,7 +305,12 @@ class MusicPlayerViewController: UIViewController {
                 UIApplication.shared.statusBarView?.backgroundColor = colors.backgroundColor
             })
         }
-
+        
+        if (colorView.backgroundColor?.isDark)! {
+            UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.lightContent, animated: true)
+        }else{
+            UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.default, animated: true)
+        }
 
     }
      @IBAction func playPausePressed(_ sender: Any)
@@ -314,8 +319,9 @@ class MusicPlayerViewController: UIViewController {
         
        
         let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString
-        let destinationPath = documentsPath.appendingPathComponent((track.trackModel?.fileName)! + ".mp3")
+        let destinationPath = documentsPath.appendingPathComponent("tracks/" + (track.trackModel?.fileName)! + ".mp3")
         
+        print(destinationPath)
         getSongBitrate(audioURL: URL(fileURLWithPath: destinationPath), duration: Int(track.totalTime)) { (bitrate) in
             print(bitrate)
         }
@@ -361,7 +367,7 @@ class MusicPlayerViewController: UIViewController {
     @IBAction func closeView(_ sender: Any)
     {
        dismiss(animated: true, completion: nil)
-        
+        UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.default, animated: true)
         NotificationCenter.default.removeObserver(self)
     }
 

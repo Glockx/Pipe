@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftyUI
 
 class PlaylistViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
@@ -27,12 +28,13 @@ class PlaylistViewController: UIViewController, UITableViewDelegate, UITableView
             navigationController?.navigationBar.prefersLargeTitles = true
             self.navigationController?.navigationItem.largeTitleDisplayMode = .always
         }
-
+        NotificationCenter.default.addObserver(self, selector: #selector(reloadTable), name: Notification.Name(rawValue: "ReloadPlaylistTable"), object: nil)
     }
 
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
+        UIApplication.shared.statusBarView?.backgroundColor = .white
         if TrackTool.shareInstance.isHidden
         {
             self.tableBottomConstrain.constant = 0
@@ -46,6 +48,12 @@ class PlaylistViewController: UIViewController, UITableViewDelegate, UITableView
                     self.view.layoutSubviews()
             })
         }
+        
+    }
+    
+    @objc func reloadTable()
+    {
+        tableView.reloadData()
     }
     // <================================== tableView Configuration Begining ================================>
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
@@ -57,13 +65,34 @@ class PlaylistViewController: UIViewController, UITableViewDelegate, UITableView
     func numberOfSections(in tableView: UITableView) -> Int
     {
         
-        return 0
+        return PlaylistTool.shareInstance.playlists.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
         let cell = tableView.dequeueReusableCell(withIdentifier: "PlaylistCell") as! PlaylistCell
+        let playlists = PlaylistTool.shareInstance.playlists[indexPath.section]
         
+        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+        
+        let fileURL = documentsDirectory!.appendingPathComponent("artwork/" + "pl-ls" + String(playlists.songCount) + playlists.name)
+        
+        if FileManager.default.fileExists(atPath: fileURL.path)
+        {
+            let size = CGSize(width: 90, height: 90)
+            
+            let image = loadImageFromDiskWith(fileName: "pl-ls" + String(playlists.songCount) + playlists.name)
+            cell.playlistImage.image = image?.reSize(toFill: size)
+            //print(cell.playlistImage.contentClippingRect)
+        }
+        else
+        {
+            cell.playlistImage.image = UIImage(named: "artwork")
+
+        }
+        cell.detailsText.text = "Count: " + String(playlists.songCount)
+        cell.totalDuration.text = playlists.totalTime
+        cell.playlistName.text = playlists.name
         return cell
     }
     
@@ -79,13 +108,42 @@ class PlaylistViewController: UIViewController, UITableViewDelegate, UITableView
         return 90
     }
     
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]?
+    {
+        let deleteAction = UITableViewRowAction(style: .default, title: "Delete Playlist", handler: { (action, indexPath) in
+            
+            let playlist = PlaylistTool.shareInstance.playlists[indexPath.section]
+            PlaylistTool.shareInstance.playlists.removeAll{$0.uuid == playlist.uuid}
+            
+            // remove section from tableView
+            let indexSet = IndexSet(arrayLiteral: indexPath.section)
+            self.tableView.deleteSections(indexSet, with: .fade)
+            tableView.reloadData()
+            
+            let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+            let ArchiveURL = DocumentsDirectory.appendingPathComponent("Playlists")
+            
+            NSKeyedArchiver.archiveRootObject(PlaylistTool.shareInstance.playlists, toFile: ArchiveURL.path)
+            
+        })
+        
+        deleteAction.backgroundColor = UIColor(red:0.94, green:0.20, blue:0.20, alpha:1.0)
+        return [deleteAction]
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
+    {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+    }
+    
     // <================================== tableView Configuration End ================================>
     @IBAction func goToCreation(_ sender: Any)
     {
         
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let newViewController = storyBoard.instantiateViewController(withIdentifier: "PlaylistCreation") as! PlaylistCreationViewController
-        navigationController?.pushViewController(newViewController, animated: true)
+        self.present(newViewController, animated: true)
         
     }
     
@@ -94,5 +152,12 @@ class PlaylistViewController: UIViewController, UITableViewDelegate, UITableView
 
 class PlaylistCell: UITableViewCell
 {
+    @IBOutlet weak var playlistImage: UIImageView!
+    @IBOutlet weak var playlistName: UILabel!
+    @IBOutlet weak var detailsText: UILabel!
     
+    @IBOutlet weak var totalDuration: UILabel!
+    override func prepareForReuse() {
+        playlistImage.image = nil
+    }
 }

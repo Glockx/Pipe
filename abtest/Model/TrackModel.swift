@@ -13,11 +13,12 @@ class TrackModel: NSObject
 {
     class func getTracks(result : ([Track]) ->()) {
         
-        let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
+        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+        let fileURL = documentsDirectory.appendingPathComponent("tracks/").path
         
         do {
             print("Load Data")
-            let fileFromBundle = try FileManager.default.contentsOfDirectory(at: URL(fileURLWithPath: documentsPath!), includingPropertiesForKeys: nil, options: [])
+            let fileFromBundle = try FileManager.default.contentsOfDirectory(at: URL(fileURLWithPath: fileURL), includingPropertiesForKeys: nil, options: [])
             let mp3Files = fileFromBundle.filter{ $0.pathExtension == "mp3" }
             let mp3FileNames = mp3Files.map{ $0.deletingPathExtension().lastPathComponent }
             
@@ -30,12 +31,14 @@ class TrackModel: NSObject
             var recordTime: String = ""
             
             
-            for path in mp3FileNames {
+            for path in mp3FileNames
+            {
+                guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first  else { return }
+                let fileURL = NSURL(fileURLWithPath: documentsDirectory.appendingPathComponent("tracks/").path)
                 
-                let ab = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
-                let url = NSURL(fileURLWithPath: ab)
-                let pathComponent = url.appendingPathComponent(path + ".mp3")
+                let pathComponent = fileURL.appendingPathComponent(path + ".mp3")
                 
+                print(pathComponent)
                 let playerItem = AVPlayerItem(url: pathComponent!)
                 let metadataList = playerItem.asset.metadata
                 
@@ -62,6 +65,9 @@ class TrackModel: NSObject
                     
                     let fileName = path
                     let fileURL = documentsDirectory.appendingPathComponent("artwork/" + fileName)
+                    
+                    
+                    print("path: ",path)
                     
                     if (artwork!.count > 0 && !FileManager.default.fileExists(atPath: fileURL.path))
                     {

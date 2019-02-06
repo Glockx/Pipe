@@ -11,4 +11,6 @@ pod 'MarqueeLabel/Swift'
 pod "ViewAnimator"
 pod 'SnapKit', '~> 4.0.0'
 pod 'BCColor'
+pod 'NotificationBannerSwift'
+pod 'SwiftyUI'
 end

@@ -63,6 +63,15 @@ class AlbumDetailsViewController: UIViewController
             strechView?.albumDate.textColor = colors.minorColor
         }
         
+        if (strechView?.colorView.backgroundColor?.isDark)!
+        {
+            UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.lightContent, animated: false)
+            strechView?.turnBack.tintColor = .white
+        }else{
+            UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.default, animated: false)
+            strechView?.turnBack.tintColor = .black
+        }
+        
         NotificationCenter.default.addObserver(self, selector: #selector(dissmisItself), name: Notification.Name(rawValue: "DismissItself"), object: nil)
         
         if TrackTool.shareInstance.isHidden
@@ -86,13 +95,11 @@ class AlbumDetailsViewController: UIViewController
             UIApplication.shared.statusBarView?.backgroundColor = statusBarColor
         }
     }
-    override var preferredStatusBarStyle : UIStatusBarStyle {
-        return .lightContent
-    }
     
     
     @objc func dissmisItself()
     {
+        UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.default, animated: false)
         navigationController?.popViewController(animated: true)
     }
     

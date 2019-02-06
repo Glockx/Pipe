@@ -47,12 +47,13 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
         }
         NotificationCenter.default.addObserver(self, selector: #selector(loadTracks), name: Notification.Name(rawValue: "loadtracks"), object: nil)
          NotificationCenter.default.addObserver(self, selector: #selector(showMusicPlayer), name: Notification.Name(rawValue: "showMusicPlayer"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(playnext), name: NSNotification.Name(rawValue: trackFinish), object: nil)
     }
 
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
-        NotificationCenter.default.addObserver(self, selector: #selector(playnext), name: NSNotification.Name(rawValue: trackFinish), object: nil)
+        
         if TrackTool.shareInstance.isHidden
         {
             self.tableViewBottom.constant = 0
@@ -179,13 +180,13 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
     {
         // =================== Delete Action ==========================
         let deleteAction = UITableViewRowAction(style: .default, title: "Delete", handler: { (action, indexPath) in
-            UIView.performWithoutAnimation {
-                 tableView.beginUpdates()
+            
+            
                 //currently selected track from table list
                 let track = self.tracks[indexPath.section]
                 //remove track file from documents
                 self.removeImageLocalPath(localPathName: track.fileName + ".mp3")
-                self.removeImageLocalPath(localPathName: track.fileName)
+                self.removeAlbumArtwork(localPathName: track.fileName)
                 //remove track from track list
                 self.tracks.remove(at: indexPath.section)
                 
@@ -205,8 +206,10 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
                 TrackTool.shareInstance.playlist = self.tracks
                 //reload table
                
-                
-                tableView.endUpdates()
+                let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+                let ArchiveURL = DocumentsDirectory.appendingPathComponent("Tracks")
+                NSKeyedArchiver.archiveRootObject(TrackTool.shareInstance.tracks, toFile: ArchiveURL.path)
+                tableView.reloadData()
                 
                 //First,checking that if miniPlayer is hidden for not playing song automaticlly
                 if !TrackTool.shareInstance.isHidden
@@ -215,6 +218,7 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
                     let musicPlayerCurrentSong = TrackTool.shareInstance.trackPlayer?.url
                     // Getting the file path of track from tableView
                     let indexPathCurrentSong = self.getFilePath(track: track)
+                    print(indexPathCurrentSong)
                     
                     //Checking that Removed song is playing in the background
                     if(musicPlayerCurrentSong == indexPathCurrentSong)
@@ -240,10 +244,8 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
                 // Reload Album List
                 NotificationCenter.default.post(name: Notification.Name(rawValue: "AlbumLoadTrack"), object: nil)
                 // Save changes to documents
-                let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
-                let ArchiveURL = DocumentsDirectory.appendingPathComponent("Tracks")
-                NSKeyedArchiver.archiveRootObject(TrackTool.shareInstance.tracks, toFile: ArchiveURL.path)
-            }
+            
+            
         })
         deleteAction.backgroundColor = UIColor(red:0.94, green:0.20, blue:0.20, alpha:1.0)
         
@@ -258,11 +260,9 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
             {
                 (alertAction) in
                 let textField = alert.textFields![0] as UITextField
-                self.renameFileLocalPath(originalName: track.fileName + ".mp3", newName: textField.text! + ".mp3")
-                self.renameFileLocalPath(originalName: track.fileName, newName: textField.text!)
+                //self.renameFileLocalPath(originalName: track.fileName, newName: textField.text!)
+                 self.renameFileLocalPath(originalName: track.fileName, newName: textField.text!)
                 track.fileName = textField.text!
-                
-                
                 
                 if let index = self.tracks.index(of: track){
                     self.tracks[index] = track
@@ -270,7 +270,11 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
                    NotificationCenter.default.post(name: Notification.Name(rawValue: "updatePlayer"), object: nil)
                 }
                 
-                DispatchQueue.main.async {
+                DispatchQueue.main.async
+                    {
+                        let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+                        let ArchiveURL = DocumentsDirectory.appendingPathComponent("Tracks")
+                        NSKeyedArchiver.archiveRootObject(TrackTool.shareInstance.tracks, toFile: ArchiveURL.path)
                     tableView.reloadData()
                 }
             }
@@ -285,9 +289,8 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
             alert.addAction(action)
             alert.addAction(cancel)
             self.present(alert, animated:true, completion: nil)
-            let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
-            let ArchiveURL = DocumentsDirectory.appendingPathComponent("Tracks")
-            NSKeyedArchiver.archiveRootObject(TrackTool.shareInstance.tracks, toFile: ArchiveURL.path)
+            
+            
         })
         editAction.backgroundColor = UIColor(red:0.00, green:0.48, blue:1.00, alpha:1.0)
         
@@ -299,33 +302,84 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
         let ab = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
         let url = NSURL(fileURLWithPath: ab)
         
-        guard let path = url.appendingPathComponent(track.fileName + ".mp3") else
+        guard let path = url.appendingPathComponent("tracks/" + track.fileName + ".mp3") else
         {
             return URL(string: "")!
         }
         return path
     }
     //remove file function
-    func removeImageLocalPath(localPathName: String) {
+    func removeImageLocalPath(localPathName: String)
+    {
         let filemanager = FileManager.default
-        let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString
-        let destinationPath = documentsPath.appendingPathComponent(localPathName)
+
+        
+        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+        let fileURL = documentsDirectory.appendingPathComponent("tracks/")
+        
+        let destinationPath = fileURL.appendingPathComponent(localPathName).path
         do { try filemanager.removeItem(atPath: destinationPath)
+            
             print("Deleted")
         }
         catch { print("Not Deleted") }
     }
     //rename file
-    func renameFileLocalPath(originalName: String, newName: String){
+    func renameFileLocalPath(originalName: String, newName: String)
+    {
+        let filemanager = FileManager.default
+        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+        let fileURL = documentsDirectory.appendingPathComponent("tracks/")
+        
+        let originalNamedes = fileURL.appendingPathComponent(originalName + ".mp3")
+        let newNamedes = fileURL.appendingPathComponent(newName + ".mp3")
+        
+        do {
+            try filemanager.moveItem(at: originalNamedes, to: newNamedes)
+            print("file is renamed")
+        }catch{
+            print("couldn't renamed!")
+            
+        }
+        
+        let artworkUrl = documentsDirectory.appendingPathComponent("artwork/")
+        
+        let originalArtwork = artworkUrl.appendingPathComponent(originalName)
+        let newArtwork = artworkUrl.appendingPathComponent(newName)
+        
+        do{
+            try filemanager.moveItem(at: originalArtwork, to: newArtwork)
+            print("Artwork is renamed")
+        }catch{
+            print("Artwork couldn't renamed!")
+        }
+    }
+    
+    
+    func renameAlbumArtwork(originalName: String, newName: String)
+    {
+        let filemanager = FileManager.default
+        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+        let destinationPath = documentsDirectory.appendingPathComponent("artwork/")
+        
+        let originalNamedes = destinationPath.appendingPathComponent(originalName).path
+        let newNamedes = destinationPath.appendingPathComponent(newName).path
+        
+        do {try filemanager.moveItem(atPath: originalNamedes, toPath: newNamedes)
+            print("Artwork is renamed")
+        }catch{print("Artwork couldn't renamed!")}
+    }
+    
+    func removeAlbumArtwork(localPathName: String)
+    {
         let filemanager = FileManager.default
         let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString
-        let originalNamedes = documentsPath.appendingPathComponent(originalName)
-        let newNamedes = documentsPath.appendingPathComponent(newName)
-        do {try filemanager.moveItem(atPath: originalNamedes, toPath: newNamedes)
-            print("file is renamed")
-        }catch{print("couldn't renamed!")}
+        let destinationPath = documentsPath.appendingPathComponent("artwork/" + localPathName)
+        do { try filemanager.removeItem(atPath: destinationPath)
+            print("Deleted")
+        }
+        catch { print("Not Deleted") }
     }
-
     
 }
 

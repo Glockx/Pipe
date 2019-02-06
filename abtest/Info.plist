@@ -19,7 +19,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
-	<string>2</string>
+	<string>36</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -29,6 +29,10 @@
 	</dict>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>let us use</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Let me</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Let me use</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
@@ -49,12 +53,6 @@
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<true/>
-	<key>NSCameraUsageDescription</key>
-	<string>Let me</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Let me use</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string></string>
+	<false/>
 </dict>
 </plist>
