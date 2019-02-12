@@ -34,7 +34,7 @@ class SongServerViewController: UIViewController
         guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
         let fileURL = documentsDirectory.appendingPathComponent("tracks/").path
         
-        davServer = GCDWebUploader(uploadDirectory: fileURL)
+        davServer = GCDWebUploader(uploadDirectory: documentsPath)
         
         
         DispatchQueue.main.async {

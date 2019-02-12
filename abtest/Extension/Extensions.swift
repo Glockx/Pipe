@@ -435,7 +435,6 @@ func saveImage(imageName: String, image: UIImage) {
     guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
     
     let fileName = imageName
-    let folder = URL.createFolder(folderName: "artwork")
     let fileURL = documentsDirectory.appendingPathComponent("artwork/" + fileName)
     guard let data = UIImageJPEGRepresentation(image, 0.3) else { return }
     
@@ -634,3 +633,105 @@ extension UIImageView {
         return CGRect(x: x, y: y, width: size.width, height: size.height)
     }
 }
+
+
+func doImagesHaveSameMeta(image1: CGImage,image2: CGImage) -> Bool
+{
+    if image1.width != image2.width{
+        return false
+    }
+    
+    if image1.height != image2.height
+    {
+        return false
+    }
+    
+    if image1.bitsPerComponent != image2.bitsPerComponent
+    {
+        return false
+    }
+    
+    if image1.bitsPerPixel != image2.bitsPerPixel{
+        return false
+    }
+    
+    if image1.bytesPerRow != image2.bytesPerRow{
+        return false
+    }
+    
+    return true
+}
+
+
+// See: https://github.com/facebookarchive/ios-snapshot-test-case/blob/master/FBSnapshotTestCase/Categories/UIImage%2BCompare.m
+// func compare(tolerance: Percentage, expected: Data, observed: Data) throws -> Bool {
+//    guard let expectedUIImage = UIImage(data: expected), let observedUIImage = UIImage(data: observed) else {
+//        throw error.error
+//    }
+//    guard let expectedCGImage = expectedUIImage.cgImage, let observedCGImage = observedUIImage.cgImage else {
+//        throw error.error
+//    }
+//    guard let expectedColorSpace = expectedCGImage.colorSpace, let observedColorSpace = observedCGImage.colorSpace else {
+//        throw error.error
+//    }
+//    if expectedCGImage.width != observedCGImage.width || expectedCGImage.height != observedCGImage.height {
+//        
+//    }
+//    let imageSize = CGSize(width: expectedCGImage.width, height: expectedCGImage.height)
+//    let numberOfPixels = Int(imageSize.width * imageSize.height)
+//    
+//    // Checking that our `UInt32` buffer has same number of bytes as image has.
+//    let bytesPerRow = min(expectedCGImage.bytesPerRow, observedCGImage.bytesPerRow)
+//    assert(MemoryLayout<UInt32>.stride == bytesPerRow / Int(imageSize.width))
+//    
+//    let expectedPixels = UnsafeMutablePointer<UInt32>.allocate(capacity: numberOfPixels)
+//    let observedPixels = UnsafeMutablePointer<UInt32>.allocate(capacity: numberOfPixels)
+//    
+//    let expectedPixelsRaw = UnsafeMutableRawPointer(expectedPixels)
+//    let observedPixelsRaw = UnsafeMutableRawPointer(observedPixels)
+//    
+//    let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue)
+//    guard let expectedContext = CGContext(data: expectedPixelsRaw, width: Int(imageSize.width), height: Int(imageSize.height),
+//                                          bitsPerComponent: expectedCGImage.bitsPerComponent, bytesPerRow: bytesPerRow,
+//                                          space: expectedColorSpace, bitmapInfo: bitmapInfo.rawValue) else {
+//                                            expectedPixels.deallocate()
+//                                            observedPixels.deallocate()
+//                                            throw error.error
+//    }
+//    guard let observedContext = CGContext(data: observedPixelsRaw, width: Int(imageSize.width), height: Int(imageSize.height),
+//                                          bitsPerComponent: observedCGImage.bitsPerComponent, bytesPerRow: bytesPerRow,
+//                                          space: observedColorSpace, bitmapInfo: bitmapInfo.rawValue) else {
+//                                            expectedPixels.deallocate()
+//                                            observedPixels.deallocate()
+//                                            throw error.error
+//    }
+//    
+//    expectedContext.draw(expectedCGImage, in: CGRect(origin: .zero, size: imageSize))
+//    observedContext.draw(observedCGImage, in: CGRect(origin: .zero, size: imageSize))
+//    
+//    let expectedBuffer = UnsafeBufferPointer(start: expectedPixels, count: numberOfPixels)
+//    let observedBuffer = UnsafeBufferPointer(start: observedPixels, count: numberOfPixels)
+//    
+//    var isEqual = true
+//    if tolerance == 0 {
+//        isEqual = expectedBuffer.elementsEqual(observedBuffer)
+//    } else {
+//        // Go through each pixel in turn and see if it is different
+//        var numDiffPixels = 0
+//        for pixel in 0 ..< numberOfPixels where expectedBuffer[pixel] != observedBuffer[pixel] {
+//            // If this pixel is different, increment the pixel diff count and see if we have hit our limit.
+//            numDiffPixels += 1
+//            let percentage = 100 * Float(numDiffPixels) / Float(numberOfPixels)
+//            if percentage > tolerance {
+//                isEqual = false
+//                break
+//            }
+//        }
+//    }
+//    
+//    expectedPixels.deallocate()
+//    observedPixels.deallocate()
+//    
+//    return isEqual
+//}
+

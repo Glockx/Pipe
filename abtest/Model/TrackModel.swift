@@ -81,8 +81,8 @@ class TrackModel: NSObject
 
                     
                 }
-                
-                let track = Track(title: title, artist: artist, fileName: path, artwork: nil,album: album,recordTime: recordTime)
+                let uuid = NSUUID().uuidString.lowercased()
+                let track = Track(title: title, artist: artist, fileName: path, artwork: nil,album: album,recordTime: recordTime,uuid: uuid)
                 
                 tracks.append(track)
                 sortedTracks = tracks.sorted { $0.fileName < $1.fileName }

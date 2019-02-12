@@ -7,15 +7,38 @@
 //
 
 import UIKit
+import Eureka
 
-class SettingsViewController: UIViewController {
-
-    override func viewDidLoad() {
+class SettingsViewController: FormViewController
+{
+    
+    
+    override func viewDidLoad()
+    {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        
+        form +++ Section("Section1")
+            <<< TextRow(){ row in
+                row.title = "Text Row"
+                row.placeholder = "Enter text here"
+            }
+            <<< PhoneRow(){
+                $0.title = "Phone Row"
+                $0.placeholder = "And numbers here"
+            }
+            +++ Section()
+            <<< LabelRow(){row in
+                
+                }.cellUpdate{cell,row in
+                    if let version = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as? String{
+                        if let bundle = Bundle.main.infoDictionary!["CFBundleVersion"] as? String
+                        {
+                            cell.textLabel?.text = "Pipe - " + version + " - Build: " + bundle
+                        }
+                    }
+                    cell.textLabel?.textAlignment = NSTextAlignment.center
+                cell.textLabel?.textColor = .darkGray
+        }
     }
-
-
-
+    
 }

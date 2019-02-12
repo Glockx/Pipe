@@ -28,9 +28,9 @@ class Track: NSObject, NSCoding
     var artwork: Data?
     var album:  String
     var recordTime: String
+    var uuid: String
     
-    
-    init(title: String, artist: String, fileName: String, artwork: Data?, album: String,recordTime: String)
+    init(title: String, artist: String, fileName: String, artwork: Data?, album: String,recordTime: String,uuid: String)
     {
         self.title = title
         self.artist = artist
@@ -38,6 +38,7 @@ class Track: NSObject, NSCoding
         self.artwork = artwork
         self.album = album
         self.recordTime = recordTime
+        self.uuid = uuid
     }
   
     // MARK: NSCoding
@@ -48,9 +49,10 @@ class Track: NSObject, NSCoding
         let artist = aDecoder.decodeObject(forKey: TrackPropertyKeys.artist.rawValue) as? String,
         let fileName = aDecoder.decodeObject(forKey: TrackPropertyKeys.fileName.rawValue) as? String,
         let album = aDecoder.decodeObject(forKey: TrackPropertyKeys.album.rawValue) as? String,
-        let recordTime = aDecoder.decodeObject(forKey: TrackPropertyKeys.recordTime.rawValue) as? String
+        let recordTime = aDecoder.decodeObject(forKey: TrackPropertyKeys.recordTime.rawValue) as? String,
+        let uuid = aDecoder.decodeObject(forKey: "uuid") as? String
             else {return nil}
-        self.init(title: title, artist: artist, fileName: fileName, artwork: nil, album: album, recordTime: recordTime)
+        self.init(title: title, artist: artist, fileName: fileName, artwork: nil, album: album, recordTime: recordTime,uuid: uuid)
     }
     
     // Saving
@@ -60,6 +62,7 @@ class Track: NSObject, NSCoding
         aCoder.encode(fileName, forKey: TrackPropertyKeys.fileName.rawValue)
         aCoder.encode(album, forKey: TrackPropertyKeys.album.rawValue)
         aCoder.encode(recordTime, forKey: TrackPropertyKeys.recordTime.rawValue)
+        aCoder.encode(uuid, forKey: "uuid")
     }
     
 }

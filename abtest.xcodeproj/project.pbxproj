@@ -27,6 +27,9 @@
 		19BAC972214516C8003FC817 /* if_business_economic_finance_interprise_company_search_2570301.png in Resources */ = {isa = PBXBuildFile; fileRef = 19BAC971214516C7003FC817 /* if_business_economic_finance_interprise_company_search_2570301.png */; };
 		524670F91CCFA25E1087AE36 /* Pods_abtest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCA82E8A858ACC80E2C18238 /* Pods_abtest.framework */; };
 		563E3F3C2149158600F05B16 /* MusicPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563E3F3B2149158600F05B16 /* MusicPlayerViewController.swift */; };
+		56712303220B2FDF001BFC3A /* PlaylistDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56712302220B2FDF001BFC3A /* PlaylistDetailsViewController.swift */; };
+		56712305220B321D001BFC3A /* PlaylistDetailsHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 56712304220B321D001BFC3A /* PlaylistDetailsHeaderView.xib */; };
+		56712307220B325C001BFC3A /* PlaylistDetailsHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56712306220B325C001BFC3A /* PlaylistDetailsHeaderView.swift */; };
 		568DAABB220866830096D514 /* SongListForPlaylistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 568DAABA220866830096D514 /* SongListForPlaylistViewController.swift */; };
 		56959D2321FB549B0071F71B /* MiniPlayerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 56959D2221FB549B0071F71B /* MiniPlayerView.xib */; };
 		56959D2521FB54C40071F71B /* MiniPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56959D2421FB54C40071F71B /* MiniPlayerView.swift */; };
@@ -63,6 +66,9 @@
 		19BAC9692144D84B003FC817 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		19BAC971214516C7003FC817 /* if_business_economic_finance_interprise_company_search_2570301.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = if_business_economic_finance_interprise_company_search_2570301.png; sourceTree = "<group>"; };
 		563E3F3B2149158600F05B16 /* MusicPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayerViewController.swift; sourceTree = "<group>"; };
+		56712302220B2FDF001BFC3A /* PlaylistDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistDetailsViewController.swift; sourceTree = "<group>"; };
+		56712304220B321D001BFC3A /* PlaylistDetailsHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PlaylistDetailsHeaderView.xib; sourceTree = "<group>"; };
+		56712306220B325C001BFC3A /* PlaylistDetailsHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistDetailsHeaderView.swift; sourceTree = "<group>"; };
 		568DAABA220866830096D514 /* SongListForPlaylistViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongListForPlaylistViewController.swift; sourceTree = "<group>"; };
 		56959D2221FB549B0071F71B /* MiniPlayerView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MiniPlayerView.xib; sourceTree = "<group>"; };
 		56959D2421FB54C40071F71B /* MiniPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerView.swift; sourceTree = "<group>"; };
@@ -71,6 +77,7 @@
 		569B637422006307009063B5 /* StrechView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrechView.swift; sourceTree = "<group>"; };
 		569B637622006E69009063B5 /* 1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1.jpg; sourceTree = "<group>"; };
 		56CDE1FA219C30E400562E56 /* _free-icons_png_512_2570314.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "_free-icons_png_512_2570314.png"; sourceTree = "<group>"; };
+		56DCC897220E9DCC0064BF86 /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
 		56E50E1522071F7400C46ED9 /* Playlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Playlist.swift; sourceTree = "<group>"; };
 		56E50E17220724F700C46ED9 /* PlaylistTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistTool.swift; sourceTree = "<group>"; };
 		56E50E192207319800C46ED9 /* PlaylistCreationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistCreationViewController.swift; sourceTree = "<group>"; };
@@ -117,10 +124,13 @@
 				190EF3F02143D692000EC0F0 /* Main.storyboard */,
 				190EF3F52143D697000EC0F0 /* LaunchScreen.storyboard */,
 				569B6370220062A2009063B5 /* StrechView.xib */,
+				56712306220B325C001BFC3A /* PlaylistDetailsHeaderView.swift */,
+				56712304220B321D001BFC3A /* PlaylistDetailsHeaderView.xib */,
 				56959D2221FB549B0071F71B /* MiniPlayerView.xib */,
 				569B637622006E69009063B5 /* 1.jpg */,
 				190EF3F82143D697000EC0F0 /* Info.plist */,
 				190EF3F32143D697000EC0F0 /* Assets.xcassets */,
+				56DCC897220E9DCC0064BF86 /* BridgingHeader.h */,
 			);
 			path = abtest;
 			sourceTree = "<group>";
@@ -169,12 +179,13 @@
 				56959D2421FB54C40071F71B /* MiniPlayerView.swift */,
 				563E3F3B2149158600F05B16 /* MusicPlayerViewController.swift */,
 				56E50E192207319800C46ED9 /* PlaylistCreationViewController.swift */,
+				56712302220B2FDF001BFC3A /* PlaylistDetailsViewController.swift */,
 				19BAC9632144D84B003FC817 /* PlaylistViewController.swift */,
-				19BAC9692144D84B003FC817 /* SettingsViewController.swift */,
 				568DAABA220866830096D514 /* SongListForPlaylistViewController.swift */,
 				19BAC9672144D84B003FC817 /* SongServerViewController.swift */,
 				569B637422006307009063B5 /* StrechView.swift */,
 				19BAC9682144D84B003FC817 /* ViewController.swift */,
+				19BAC9692144D84B003FC817 /* SettingsViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -257,6 +268,7 @@
 				190EF3F72143D697000EC0F0 /* LaunchScreen.storyboard in Resources */,
 				190EF3F42143D697000EC0F0 /* Assets.xcassets in Resources */,
 				569B6371220062A2009063B5 /* StrechView.xib in Resources */,
+				56712305220B321D001BFC3A /* PlaylistDetailsHeaderView.xib in Resources */,
 				56959D2321FB549B0071F71B /* MiniPlayerView.xib in Resources */,
 				19BAC972214516C8003FC817 /* if_business_economic_finance_interprise_company_search_2570301.png in Resources */,
 				569B637722006E6A009063B5 /* 1.jpg in Resources */,
@@ -311,6 +323,7 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-abtest/Pods-abtest-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/BCColor/BCColor.framework",
+				"${BUILT_PRODUCTS_DIR}/Eureka/Eureka.framework",
 				"${BUILT_PRODUCTS_DIR}/GCDWebServer/GCDWebServer.framework",
 				"${BUILT_PRODUCTS_DIR}/MarqueeLabel/MarqueeLabel.framework",
 				"${BUILT_PRODUCTS_DIR}/NotificationBannerSwift/NotificationBannerSwift.framework",
@@ -321,6 +334,7 @@
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BCColor.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Eureka.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GCDWebServer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MarqueeLabel.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NotificationBannerSwift.framework",
@@ -341,9 +355,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				19BAC96B2144D84B003FC817 /* AlbumsViewController.swift in Sources */,
+				56712303220B2FDF001BFC3A /* PlaylistDetailsViewController.swift in Sources */,
 				19602688214647D80027E3C7 /* Track.swift in Sources */,
 				1960268B214648200027E3C7 /* TrackModel.swift in Sources */,
 				563E3F3C2149158600F05B16 /* MusicPlayerViewController.swift in Sources */,
+				56712307220B325C001BFC3A /* PlaylistDetailsHeaderView.swift in Sources */,
 				56959D2521FB54C40071F71B /* MiniPlayerView.swift in Sources */,
 				190EF40E2144367F000EC0F0 /* Extensions.swift in Sources */,
 				190EF3ED2143D692000EC0F0 /* AppDelegate.swift in Sources */,
@@ -514,10 +530,12 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -Xfrontend -debug-time-function-bodies";
 				PRODUCT_BUNDLE_IDENTIFIER = com.nicat.Player;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OBJC_BRIDGING_HEADER = abtest/BridgingHeader.h;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -537,9 +555,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -Xfrontend -debug-time-function-bodies";
 				PRODUCT_BUNDLE_IDENTIFIER = com.nicat.Player;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = abtest/BridgingHeader.h;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

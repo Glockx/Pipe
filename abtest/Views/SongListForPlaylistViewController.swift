@@ -15,35 +15,49 @@ class SongListForPlaylistViewController: UIViewController,UITableViewDataSource,
     var tracks = [Track]()
     var searchTrack = [Track]()
     var searching = false
+    var isEditingMode = false
+    var passedTracks: [Track]!
     var checked = [Track]()
     
     override func viewDidLoad()
     {
         super.viewDidLoad()
         //self.hideKeyboardWhenTappedAround()
+        
         tracks =  TrackTool.shareInstance.tracks.sorted { $0.fileName < $1.fileName}
+        checked = passedTracks
+        print(isEditingMode)
+        let contaning = checked.map{$0.fileName}
+        
+        tracks = tracks.filter{!contaning.contains($0.fileName)}
+       
         tableView.delegate = self
         tableView.dataSource = self
         searchBar.delegate = self
-        tableView.allowsMultipleSelection = true
-        
+
+        tableView.allowsMultipleSelection = false
+
+        dump(tracks)
+
     }
     
     @IBAction func DoneAdding(_ sender: Any)
     {
+        
         performSegue(withIdentifier: "fuckingUnwind", sender: self)
+        UIApplication.shared.keyWindow?.endEditing(true)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let destVc = segue.destination as! PlaylistCreationViewController
         
         destVc.passedTracks = self.checked
+        destVc.tableView.reloadData()
     }
     
     // <================================== tableView Configuration Beginning ================================>
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        
         return 1
     }
     
@@ -60,21 +74,22 @@ class SongListForPlaylistViewController: UIViewController,UITableViewDataSource,
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "searchCell") as! SearchCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "nicat", for: indexPath) as! NicatCell
         let songs = tracks[indexPath.section]
-        
-
       
         //checking if currently search track on search bar. If it does re-index list due to search element
         if searching
         {
             let searchsongs = searchTrack[indexPath.section]
             
-            if checked.contains(searchsongs){
-                cell.accessoryType = .checkmark
-            }else{
-                cell.accessoryType = .none
-            }
+                if checked.contains(searchsongs){
+                    cell.accessoryType = .checkmark
+                    print("contains")
+                }else{
+                    cell.accessoryType = .none
+                    print("not contains")
+                }
+            
             DispatchQueue.main.async
                 {
                     guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
@@ -92,17 +107,19 @@ class SongListForPlaylistViewController: UIViewController,UITableViewDataSource,
                     }
                     
             }
+            
             cell.songName.text = searchsongs.fileName
             
         }
         // Else reserve original list of tracks
         else
         {
-            if checked.contains(songs){
-                cell.accessoryType = .checkmark
-            }else{
-                cell.accessoryType = .none
-            }
+           
+                if checked.contains(songs){
+                    cell.accessoryType = .checkmark
+                }else{
+                    cell.accessoryType = .none
+                }
             DispatchQueue.main.async
             {
                 guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
@@ -122,23 +139,41 @@ class SongListForPlaylistViewController: UIViewController,UITableViewDataSource,
             }
             cell.songName.text = songs.fileName
             
+            
         }
         return cell
+    }
+    
+   func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+//    for cell in tableView.visibleCells {
+//        if let customCell = cell as? NicatCell {
+//            print(customCell.songName.text)
+//            if checked.contains(where: {$0.fileName == customCell.songName.text})
+//            {
+//                customCell.accessoryType = .checkmark
+//
+//            }
+//        }
+//    }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         tableView.deselectRow(at: indexPath, animated: true)
-        if let cell = tableView.cellForRow(at: indexPath) {
-            if(!checked.contains(tracks[indexPath.section])){
+
+        if let cell = tableView.cellForRow(at: indexPath)
+        {
+            if(!checked.contains(tracks[indexPath.section]))
+            {
                 cell.accessoryType = .checkmark
                 checked.append(tracks[indexPath.section])
-                
-            }else{
+            }
+            else
+            {
                 cell.accessoryType = .none
                 checked = checked.filter({$0 != tracks[indexPath.section]})
             }
-            
+
         }
     }
     
@@ -152,7 +187,8 @@ class SongListForPlaylistViewController: UIViewController,UITableViewDataSource,
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat
     {
-        return 90
+        return 47
+        
     }
     
     // <================================== tableView Configuration End ================================>
@@ -178,12 +214,12 @@ class SongListForPlaylistViewController: UIViewController,UITableViewDataSource,
 
 
 
-class SearchCell: UITableViewCell{
+class NicatCell: UITableViewCell {
+//    @IBOutlet weak var artwork: UIImageView!
+//    @IBOutlet weak var songName: UILabel!
+   
     @IBOutlet weak var artwork: UIImageView!
     @IBOutlet weak var songName: UILabel!
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        artwork.image = nil
-    }
+    
 }

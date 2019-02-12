@@ -12,14 +12,25 @@ import NotificationBannerSwift
 
 class PlaylistCreationViewController: UIViewController,UIImagePickerControllerDelegate,UINavigationControllerDelegate, UITableViewDelegate, UITableViewDataSource
 {
+    @IBOutlet weak var tableBottom: NSLayoutConstraint!
+    @IBOutlet weak var deleteButton: UIButton!
+    @IBOutlet weak var NavigationBar: UINavigationItem!
     @IBOutlet weak var tableView: IntrinsicTableView!
     @IBOutlet weak var playlistName: UITextField!
     @IBOutlet weak var imageChangeButton: UIButton!
     @IBOutlet weak var playlistImage: UIImageView!
-    
+    /// Value in range 0...100 %
+    typealias Percentage = Float
+    var loadedImage: UIImage?
+    var isCreationMode = false
     var playlistInit: Playlist? = nil
     var passedTracks = [Track]()
+    var passedPlaylist: Playlist?
+    var passedPlaylistName = ""
+    var passedPlaylistImage: UIImage?
     let picker = UIImagePickerController()
+    var selected = [Track]()
+    var updatedPlaylist: Playlist?
     
     override func viewDidLoad()
     {
@@ -31,11 +42,23 @@ class PlaylistCreationViewController: UIViewController,UIImagePickerControllerDe
         tableView.delegate = self
         tableView.dataSource = self
         
-        tableView.isEditing = true
+        if isCreationMode{
+            playlistName.text = passedPlaylistName
+            playlistImage.image = passedPlaylistImage
+            NavigationBar.title = "Update Playlist"
+            loadedImage = loadImageFromDiskWith(fileName: (passedPlaylist?.uuid)!)
+        }
+        
+        tableView.isEditing = false
+        
         tableView.remembersLastFocusedIndexPath = true
+        
         //customize playlist textfiled style
         playlistName.setBottomBorder(withColor: .lightGray)
-        self.hideKeyboardWhenTappedAround()
+       // self.hideKeyboardWhenTappedAround()
+        
+        print("is creation mode active: ", isCreationMode)
+        
     }
     
     override func viewWillAppear(_ animated: Bool)
@@ -45,6 +68,66 @@ class PlaylistCreationViewController: UIViewController,UIImagePickerControllerDe
         tableView.reloadData()
     }
     
+    @IBAction func deleteSelectedTracks(_ sender: UIButton)
+    {
+
+        //sender.isSelected = !sender.isSelected
+        if !sender.isHidden{
+            
+            UIView.transition(with: view, duration: 0.3, options: .transitionCrossDissolve, animations: {
+                sender.isHidden = true
+                sender.alpha = 1
+                
+            })
+        }
+        
+        for track in selected{
+            selected.removeAll(where: {$0.fileName == track.fileName})
+            passedTracks.removeAll(where: {$0.fileName == track.fileName})
+        }
+        
+        self.tableView.visibleCells.forEach {
+            $0.accessoryType = .none
+        }
+        
+        UIView.animate(withDuration: 0.3, animations:
+            {
+            self.tableBottom.constant = 0
+            self.view.layoutSubviews()
+        })
+        
+        tableView.reloadData()
+    }
+    
+    @IBAction func reorderPressed(_ sender: UIButton)
+    {
+        
+        sender.isSelected = !sender.isSelected
+        
+        if passedTracks.count > 2
+        {
+            sender.isUserInteractionEnabled = true
+            if sender.isSelected {
+                UIView.animate(withDuration: 0.3, animations: {
+                    self.tableView.isEditing = true
+                    sender.tintColor = UIColor(red:0.00, green:0.48, blue:1.00, alpha:1.0)
+                })
+                
+            }else
+            {
+                UIView.animate(withDuration: 0.3, animations: {
+                    self.tableView.isEditing = false
+                    sender.tintColor = .lightGray
+                })
+                
+            }
+        }
+        else
+        {
+            sender.isUserInteractionEnabled = false
+        }
+        
+    }
     
     @IBAction func savePlaylist(_ sender: Any)
     {
@@ -62,13 +145,71 @@ class PlaylistCreationViewController: UIViewController,UIImagePickerControllerDe
         }
         else
         {
+            if isCreationMode == false{
+                initPlaylist(handleComplete: saveData)
+                
+                self.dismiss(animated: true, completion: nil)
+            }else{
+                updatePlaylist(handleComplete: saveData)
+                performSegue(withIdentifier: "fuckingUnwind2", sender: self)
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "reloadPlaylistDetailsView"), object: nil)
+            }
             
-            initPlaylist(handleComplete: saveData)
             NotificationCenter.default.post(name: Notification.Name(rawValue: "ReloadPlaylistTable"), object: nil)
-            self.dismiss(animated: true, completion: nil)
+          
+            
+            UIApplication.shared.keyWindow?.endEditing(true)
         }
     }
     
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?)
+    {
+        let destVc = segue.destination as! PlaylistDetailsViewController
+        
+        destVc.passedPlaylistName = playlistName.text!
+        destVc.passedSongCount = passedTracks.count
+        destVc.passedPlaylist?.tracks = passedTracks
+        destVc.passedImage = playlistImage.image
+        destVc.passedTotalTime = calculateTotalTime(tracks: passedTracks)
+    }
+    
+    
+    // Updating Current Playlist
+    func updatePlaylist(handleComplete:(()->()))
+    {
+        if playlistImage.image != nil
+        {
+            
+            if (doImagesHaveSameMeta(image1: (loadedImage?.cgImage)!, image2: playlistImage.image!.cgImage!))
+            {
+                print("images are same")
+            }else
+            {
+                print("Images are not same")
+                removePlaylistAlbumArtwork(localPathName: (passedPlaylist?.uuid)!)
+                saveImage(imageName: (passedPlaylist?.uuid)!, image: playlistImage.image!)
+            }
+        }
+    
+        
+        //Get total time of songs in the list
+        let totalTime = calculateTotalTime(tracks: passedTracks)
+        
+        
+        playlistInit = Playlist.init(name: playlistName.text!, songCount: passedTracks.count, tracks: passedTracks, artwork: nil, createdDay: (passedPlaylist?.createdDay)!, totalTime: totalTime,uuid : (passedPlaylist?.uuid)!)
+       
+        if let row = PlaylistTool.shareInstance.playlists.firstIndex(where: {$0.uuid == passedPlaylist?.uuid})
+        {
+            PlaylistTool.shareInstance.playlists[row] = playlistInit!
+            updatedPlaylist = playlistInit!
+            //dump(PlaylistTool.shareInstance.playlists[row])
+        }
+        
+        handleComplete()
+    }
+    
+    // Creating New Playlist
     func initPlaylist(handleComplete:(()->()))
     {
         
@@ -79,9 +220,12 @@ class PlaylistCreationViewController: UIViewController,UIImagePickerControllerDe
         let timeStamp = formatter.string(from: date)
         
         let uuid = NSUUID().uuidString.lowercased()
+        
+        print("uuid1: ",uuid)
         if playlistImage.image != nil
         {
-            saveImage(imageName: "pl-ls" + String(passedTracks.count) + playlistName.text!, image: playlistImage.image!)
+            
+            saveImage(imageName: uuid, image: playlistImage.image!)
         }
         
         
@@ -90,10 +234,25 @@ class PlaylistCreationViewController: UIViewController,UIImagePickerControllerDe
         
         playlistInit = Playlist.init(name: playlistName.text!, songCount: passedTracks.count, tracks: passedTracks, artwork: nil, createdDay: timeStamp, totalTime: totalTime,uuid : uuid)
         PlaylistTool.shareInstance.playlists.append(playlistInit!)
-        dump(PlaylistTool.shareInstance.playlists)
+       // dump(PlaylistTool.shareInstance.playlists)
         
         handleComplete()
     }
+    
+    
+    
+    
+    func removePlaylistAlbumArtwork(localPathName: String)
+    {
+        let filemanager = FileManager.default
+        let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString
+        let destinationPath = documentsPath.appendingPathComponent("artwork/" + localPathName)
+        do { try filemanager.removeItem(atPath: destinationPath)
+            print("Deleted")
+        }
+        catch { print("Not Deleted") }
+    }
+    
     
     private func saveData()
     {
@@ -112,11 +271,11 @@ class PlaylistCreationViewController: UIViewController,UIImagePickerControllerDe
     {
         let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
         let newViewController = storyBoard.instantiateViewController(withIdentifier: "SongList") as! SongListForPlaylistViewController
-        
-        newViewController.checked = passedTracks
+        newViewController.isEditingMode = true
+        newViewController.passedTracks = passedTracks
         self.present(newViewController, animated: true, completion:nil)
-        
     }
+    
     
     @IBAction func unwindToVC1(segue:UIStoryboardSegue) {}
     
@@ -147,7 +306,12 @@ class PlaylistCreationViewController: UIViewController,UIImagePickerControllerDe
                 
                 if FileManager.default.fileExists(atPath: fileURL.path)
                 {
-                    let image = loadImageFromDiskWith(fileName: tracks.fileName)
+                    var image = loadImageFromDiskWith(fileName: tracks.fileName)
+                    let imagesize = image?.size
+                    UIGraphicsBeginImageContext(imagesize!)
+                    image?.draw(in: CGRect(x: 0, y: 0, width: imagesize?.width ?? 0.0, height: imagesize?.height ?? 0.0))
+                    image = UIGraphicsGetImageFromCurrentImageContext()
+                    UIGraphicsEndImageContext();
                     
                     cell.artwork.image = image
                 }
@@ -172,8 +336,7 @@ class PlaylistCreationViewController: UIViewController,UIImagePickerControllerDe
         tableView.reloadData()
         
     }
-    
-    
+
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return CGFloat(5)
     }
@@ -188,12 +351,77 @@ class PlaylistCreationViewController: UIViewController,UIImagePickerControllerDe
         return 44
     }
     
-     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
         return .none
     }
-    
-     func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+
+    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
         return false
+    }
+    
+    
+    
+    
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]?
+    {
+        let deleteAction = UITableViewRowAction(style: .default, title: "Delete", handler: { (action, indexPath) in
+            //getting section of currently selected track from table list
+            let indexSet = IndexSet(arrayLiteral: indexPath.section)
+            
+            self.passedTracks.remove(at: indexPath.section)
+            // remove section from tableView
+            self.tableView.deleteSections(indexSet, with: .fade)
+        })
+        deleteAction.backgroundColor = UIColor(red:0.94, green:0.20, blue:0.20, alpha:1.0)
+        return [deleteAction]
+    }
+    
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
+    {
+        
+        tableView.deselectRow(at: indexPath, animated: false)
+        
+        if let cell = tableView.cellForRow(at: indexPath)
+        {
+            if(!selected.contains(passedTracks[indexPath.section]))
+            {
+                cell.accessoryType = .checkmark
+                selected.append(passedTracks[indexPath.section])
+            }
+            else
+            {
+                cell.accessoryType = .none
+                selected = selected.filter({$0 != passedTracks[indexPath.section]})
+            }
+            
+        }
+        
+        if selected.count > 0 && deleteButton.alpha == 0
+        {
+            self.deleteButton.isHidden = false
+            UIView.animate(withDuration: 0.3, animations: {
+                self.tableBottom.constant = 62
+                self.deleteButton.alpha = 1
+                self.view.layoutSubviews()
+            })
+            
+        }
+        
+        
+        if selected.count <= 0 {
+            
+            UIView.animate(withDuration: 0.3, animations: {
+                self.tableBottom.constant = 0
+                self.deleteButton.alpha = 0
+                self.view.layoutSubviews()
+            })
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4)
+            {
+                self.deleteButton.isHidden = true
+            }
+        }
+        print(selected.count)
     }
     
     // <=============================================================================>
@@ -263,6 +491,9 @@ class PlaylistCreationViewController: UIViewController,UIImagePickerControllerDe
         sender.resignFirstResponder()
     }
     
+    enum error: Error{
+        case error
+    } 
 }
 
 class PlaylisCreationTableCell: UITableViewCell

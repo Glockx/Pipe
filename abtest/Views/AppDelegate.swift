@@ -20,12 +20,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         
         let file = URL.createFolder(folderName: "tracks")
-        
+        let folder = URL.createFolder(folderName: "artwork")
         
         UIApplication.shared.statusBarView?.backgroundColor = UIColor.white
         TrackTool.shareInstance.tracks = loadSongs() ?? TrackTool.shareInstance.tracks
         PlaylistTool.shareInstance.playlists = loadPlaylists() ?? PlaylistTool.shareInstance.playlists
-        dump(PlaylistTool.shareInstance.playlists)
+        //dump(PlaylistTool.shareInstance.playlists)
         #if DEBUG
         Bundle(path: "/Applications/InjectionIII.app/Contents/Resources/iOSInjection10.bundle")?.load()
         #endif

@@ -34,9 +34,7 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
         tableView.dataSource = self
         tableView.delegate = self
      
-            self.loadTracks()
-        
-        
+        self.loadTracks()
 
         if #available(iOS 11, *) {
             UINavigationBar.appearance().largeTitleTextAttributes = [
@@ -45,11 +43,22 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
             navigationController?.navigationBar.prefersLargeTitles = true
             self.navigationController?.navigationItem.largeTitleDisplayMode = .always
         }
+        
         NotificationCenter.default.addObserver(self, selector: #selector(loadTracks), name: Notification.Name(rawValue: "loadtracks"), object: nil)
+        
          NotificationCenter.default.addObserver(self, selector: #selector(showMusicPlayer), name: Notification.Name(rawValue: "showMusicPlayer"), object: nil)
+        
         NotificationCenter.default.addObserver(self, selector: #selector(playnext), name: NSNotification.Name(rawValue: trackFinish), object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(addObser), name: NSNotification.Name(rawValue: "addobser"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(justEnteredToApp), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
     }
 
+    @objc func addObser()
+    {
+        NotificationCenter.default.addObserver(self, selector: #selector(playnext), name: NSNotification.Name(rawValue: trackFinish), object: nil)
+    }
+    
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
@@ -71,6 +80,12 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
         NotificationCenter.default.post(name: Notification.Name(rawValue: "updateIcon"), object: nil)
         UIApplication.shared.statusBarView?.backgroundColor = .white
         tracks.sort { $0.fileName < $1.fileName}
+    }
+    
+    @objc func justEnteredToApp()
+    {
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "updatePlayer"), object: nil)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "updateIcon"), object: nil)
     }
     
     
@@ -120,7 +135,7 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
                 if TrackTool.shareInstance.trackPlayer?.isPlaying ?? false{
                     TrackTool.shareInstance.pauseTrack()
                 }
-            
+            TrackTool.shareInstance.playlist.removeAll()
             TrackTool.shareInstance.tracks.removeAll()
             NotificationCenter.default.post(name: Notification.Name(rawValue: "hidePlayerWithAnimation"), object: nil)
             
@@ -138,6 +153,7 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
    {
         let mainStoryboard = UIStoryboard(name: "Main", bundle: Bundle.main)
         let vc : MusicPlayerViewController = mainStoryboard.instantiateViewController(withIdentifier: "MusicControl") as! MusicPlayerViewController
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: trackFinish), object: nil)
         self.present(vc, animated: true, completion: nil)
     }
     
@@ -184,18 +200,42 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
             
                 //currently selected track from table list
                 let track = self.tracks[indexPath.section]
+            
+            // traversing through playlists in playlist object
+            for playlist in PlaylistTool.shareInstance.playlists
+            {
+                    //remove track from playlist
+                if let index = playlist.tracks.firstIndex(where: {$0.fileName == track.fileName})
+                    {
+                        print(index)
+                        print("contains: ",track.fileName)
+                        playlist.tracks.remove(at: index)
+                        print("removed", track.fileName)
+                        playlist.songCount -= 1
+                        playlist.totalTime = calculateTotalTime(tracks: playlist.tracks)
+                        
+                    }
+            }
+                //dump(PlaylistTool.shareInstance.playlists)
                 //remove track file from documents
                 self.removeImageLocalPath(localPathName: track.fileName + ".mp3")
                 self.removeAlbumArtwork(localPathName: track.fileName)
                 //remove track from track list
                 self.tracks.remove(at: indexPath.section)
-                
-                // !IMPORTANT: It's should be checked that removed track is last track of array for restarting index array to first item in the list otherwise it won't play first song in the list (Dont't remove this line)
-                if self.tracks.endIndex == indexPath.section
+            
+            // !IMPORTANT: It's should be checked that removed track is last track of array for restarting index array to first item in the list otherwise it won't play first song in the list (Dont't remove this line)
+            if TrackTool.shareInstance.trackPlayer!.isPlaying
+            {
+                print("end index:",TrackTool.shareInstance.playlist.endIndex)
+                print("current index:", TrackTool.shareInstance.findCurrentTrackIndex())
+                if TrackTool.shareInstance.playlist.endIndex == TrackTool.shareInstance.findCurrentTrackIndex() + 1
                 {
                     print("last track")
                     TrackTool.shareInstance.trackIndex = 0
                 }
+            }
+            
+            
                 //getting section of currently selected track from table list
                 let indexSet = IndexSet(arrayLiteral: indexPath.section)
                 // remove section from tableView
@@ -203,12 +243,15 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
                 
                 //reload tracks array with new song list
                 TrackTool.shareInstance.tracks = self.tracks
-                TrackTool.shareInstance.playlist = self.tracks
+                if TrackTool.shareInstance.playlist.contains(track)
+                {
+                    
+                    TrackTool.shareInstance.playlist.removeAll(where: {$0.fileName == track.fileName})
+                }
+
+                print("tracks count:", TrackTool.shareInstance.playlist.count)
+
                 //reload table
-               
-                let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
-                let ArchiveURL = DocumentsDirectory.appendingPathComponent("Tracks")
-                NSKeyedArchiver.archiveRootObject(TrackTool.shareInstance.tracks, toFile: ArchiveURL.path)
                 tableView.reloadData()
                 
                 //First,checking that if miniPlayer is hidden for not playing song automaticlly
@@ -239,13 +282,31 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
                         // Assigning grabed trackIndex to main trackIndex
                         TrackTool.shareInstance.trackIndex = aa
                     }
+                    
+                    if TrackTool.shareInstance.playlist.isEmpty{
+                        NotificationCenter.default.post(name: Notification.Name(rawValue: "hidePlayerWithAnimation"), object: nil)
+                        TrackTool.shareInstance.stop()
+                        self.tableViewBottom.constant = 0
+                        self.tableView.layoutIfNeeded()
+                        TrackTool.shareInstance.isHidden = true
+                    }
                 }
                 
                 // Reload Album List
                 NotificationCenter.default.post(name: Notification.Name(rawValue: "AlbumLoadTrack"), object: nil)
+                //update playlist object and playlist view controller
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "ReloadPlaylistTable"), object: nil)
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "updateRemovedTracks-PlaylistDetailsView"), object: nil)
+            
+                let DocumentsDirectorya = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+                let ArchiveURLa = DocumentsDirectorya.appendingPathComponent("Playlists")
+                NSKeyedArchiver.archiveRootObject(PlaylistTool.shareInstance.playlists, toFile: ArchiveURLa.path)
+                /// =================================== Update Playlists End ================================
+            
                 // Save changes to documents
-            
-            
+                let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+                let ArchiveURL = DocumentsDirectory.appendingPathComponent("Tracks")
+                NSKeyedArchiver.archiveRootObject(TrackTool.shareInstance.tracks, toFile: ArchiveURL.path)
         })
         deleteAction.backgroundColor = UIColor(red:0.94, green:0.20, blue:0.20, alpha:1.0)
         
@@ -259,24 +320,42 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
             let action = UIAlertAction(title: "Done", style: .default)
             {
                 (alertAction) in
+                
                 let textField = alert.textFields![0] as UITextField
-                //self.renameFileLocalPath(originalName: track.fileName, newName: textField.text!)
-                 self.renameFileLocalPath(originalName: track.fileName, newName: textField.text!)
+                self.renameFileLocalPath(originalName: track.fileName, newName: textField.text!)
+                
                 track.fileName = textField.text!
                 
-                if let index = self.tracks.index(of: track){
+                if let index = self.tracks.index(of: track)
+                {
                     self.tracks[index] = track
                     TrackTool.shareInstance.tracks = self.tracks
-                   NotificationCenter.default.post(name: Notification.Name(rawValue: "updatePlayer"), object: nil)
+                    NotificationCenter.default.post(name: Notification.Name(rawValue: "updatePlayer"), object: nil)
                 }
                 
-                DispatchQueue.main.async
+                for playlist in PlaylistTool.shareInstance.playlists
+                {
+                    if let index = playlist.tracks.firstIndex(where: {$0.uuid == track.uuid})
                     {
+                        print(index)
+                        playlist.tracks[index] = track
+                        dump(playlist)
+                    }
+                }
+                
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "AlbumLoadTrack"), object: nil)
+                //update playlist object and playlist view controller
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "ReloadPlaylistTable"), object: nil)
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "updateRemovedTracks-PlaylistDetailsView"), object: nil)
+                
+               
                         let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
                         let ArchiveURL = DocumentsDirectory.appendingPathComponent("Tracks")
                         NSKeyedArchiver.archiveRootObject(TrackTool.shareInstance.tracks, toFile: ArchiveURL.path)
+                        let ArchiveURLa = DocumentsDirectory.appendingPathComponent("Playlists")
+                        NSKeyedArchiver.archiveRootObject(PlaylistTool.shareInstance.playlists, toFile: ArchiveURLa.path)
+                self.tracks.sort { $0.fileName < $1.fileName}
                     tableView.reloadData()
-                }
             }
             
             
@@ -320,7 +399,7 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
         let destinationPath = fileURL.appendingPathComponent(localPathName).path
         do { try filemanager.removeItem(atPath: destinationPath)
             
-            print("Deleted")
+            
         }
         catch { print("Not Deleted") }
     }
@@ -356,27 +435,13 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
     }
     
     
-    func renameAlbumArtwork(originalName: String, newName: String)
-    {
-        let filemanager = FileManager.default
-        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
-        let destinationPath = documentsDirectory.appendingPathComponent("artwork/")
-        
-        let originalNamedes = destinationPath.appendingPathComponent(originalName).path
-        let newNamedes = destinationPath.appendingPathComponent(newName).path
-        
-        do {try filemanager.moveItem(atPath: originalNamedes, toPath: newNamedes)
-            print("Artwork is renamed")
-        }catch{print("Artwork couldn't renamed!")}
-    }
-    
     func removeAlbumArtwork(localPathName: String)
     {
         let filemanager = FileManager.default
         let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString
         let destinationPath = documentsPath.appendingPathComponent("artwork/" + localPathName)
         do { try filemanager.removeItem(atPath: destinationPath)
-            print("Deleted")
+            
         }
         catch { print("Not Deleted") }
     }
@@ -410,20 +475,21 @@ extension FilesViewController {
             NotificationCenter.default.post(name: Notification.Name(rawValue: "showPlayer"), object: nil)
         }
         
-        if firstTime {
-          
-            
-            UIView.animate(withDuration: 0.3, animations: {
+        if firstTime
+        {
+            UIView.animate(withDuration: 0.3, animations:
+                {
                 self.tableViewBottom.constant = -67
                 self.view.layoutIfNeeded()
             })
             
             self.firstTime = false
             NotificationCenter.default.post(name: Notification.Name(rawValue: "showPlayer"), object: nil)
-            NotificationCenter.default.post(name: Notification.Name(rawValue: "updatePlayer"), object: nil)
-            NotificationCenter.default.post(name: Notification.Name(rawValue: "updateIcon"), object: nil)
             TrackTool.shareInstance.isHidden = false
         }
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "updatePlayer"), object: nil)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "updateIcon"), object: nil)
+        
     }
     
 

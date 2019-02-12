@@ -175,6 +175,21 @@ class AlbumsViewController: UIViewController,UITableViewDelegate,UITableViewData
                 self.removeTrackLocalPath(localPathName: element.fileName + ".mp3")
                 self.removeAlbumArtwork(localPathName: element.fileName)
                
+                for playlist in PlaylistTool.shareInstance.playlists
+                {
+                    if let index = playlist.tracks.firstIndex(where: {$0.fileName == element.fileName})
+                    {
+                        print(index)
+                        print("contains: ", element.fileName)
+                        playlist.tracks.remove(at: index)
+                        print("removed: ", element.fileName)
+                        playlist.songCount -= 1
+                        playlist.totalTime = calculateTotalTime(tracks: playlist.tracks)
+                    }
+                }
+                if TrackTool.shareInstance.playlist.contains(element){
+                    TrackTool.shareInstance.playlist.removeAll(where: {$0.fileName == element.fileName})
+                }
             }
             self.tracks.removeAll{ $0.album == album.album }
             // clear grabbed track list
@@ -211,6 +226,14 @@ class AlbumsViewController: UIViewController,UITableViewDelegate,UITableViewData
             }
 
             NotificationCenter.default.post(name: Notification.Name(rawValue: "loadtracks"), object: nil)
+            NotificationCenter.default.post(name: Notification.Name(rawValue: "ReloadPlaylistTable"), object: nil)
+            NotificationCenter.default.post(name: Notification.Name(rawValue: "updateRemovedTracks-PlaylistDetailsView"), object: nil)
+            
+            
+            let DocumentsDirectorya = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+            let ArchiveURLa = DocumentsDirectorya.appendingPathComponent("Playlists")
+            NSKeyedArchiver.archiveRootObject(PlaylistTool.shareInstance.playlists, toFile: ArchiveURLa.path)
+            
             let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
             let ArchiveURL = DocumentsDirectory.appendingPathComponent("Tracks")
             NSKeyedArchiver.archiveRootObject(TrackTool.shareInstance.tracks, toFile: ArchiveURL.path)

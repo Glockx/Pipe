@@ -10,10 +10,6 @@ import UIKit
 import MarqueeLabel
 import SnapKit
 import BCColor
-
-
-
-
 //TODO: Make Artist and Track Label MarqueeLabel
 
 class MusicPlayerViewController: UIViewController {
@@ -78,15 +74,22 @@ class MusicPlayerViewController: UIViewController {
             nextSongButton.isUserInteractionEnabled = true
         }
 
-        
         // set observer for UIApplication.willEnterForegroundNotification
         NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(enteredBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
+
     }
     
 //    override var preferredStatusBarStyle : UIStatusBarStyle {
 //        return .lightContent
 //    }
 //
+    
+    @objc func enteredBackground()
+    {
+        //NotificationCenter.default.removeObserver(self)
+    }
+    
    @objc override func viewDidLayoutSubviews() {
     setupViewConstrains()
     }
@@ -99,10 +102,17 @@ class MusicPlayerViewController: UIViewController {
         setupProgressSlider()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(true)
+        updateView()
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
-       // NotificationCenter.default.addObserver(self, selector: #selector(nextPressed), name: NSNotification.Name(rawValue: trackFinish), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(nextPressed), name: NSNotification.Name(rawValue: trackFinish), object: nil)
         super.viewWillAppear(animated)
-        if TrackTool.shareInstance.getTrackMessage().isPlaying{
+        
+        if TrackTool.shareInstance.getTrackMessage().isPlaying
+        {
             playButton.setBackgroundImage(UIImage(named: "Pause"), for: .normal)
         }else{
             playButton.setBackgroundImage(UIImage(named: "play-button"), for: .normal)
@@ -146,11 +156,13 @@ class MusicPlayerViewController: UIViewController {
         }else{
             playButton.setBackgroundImage(UIImage(named: "play-button"), for: .normal)
         }
+         updateView()
     }
     
     @objc func DownSwipe(){
         print("down")
         dismiss(animated: true, completion: nil)
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "addobser"), object: nil)
         NotificationCenter.default.removeObserver(self)
     }
     
@@ -306,13 +318,14 @@ class MusicPlayerViewController: UIViewController {
             })
         }
         
-        if (colorView.backgroundColor?.isDark)! {
+        if (colorView.backgroundColor?.isDark)!
+        {
             UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.lightContent, animated: true)
         }else{
             UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.default, animated: true)
         }
-
     }
+    
      @IBAction func playPausePressed(_ sender: Any)
     {
         let track = TrackTool.shareInstance.getTrackMessage()
@@ -368,6 +381,8 @@ class MusicPlayerViewController: UIViewController {
     {
        dismiss(animated: true, completion: nil)
         UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.default, animated: true)
+        
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "addobser"), object: nil)
         NotificationCenter.default.removeObserver(self)
     }
 

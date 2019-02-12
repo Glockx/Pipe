@@ -19,19 +19,19 @@ class TrackTool: NSObject , AVAudioPlayerDelegate{
     static let shareInstance = TrackTool()
     var track: TrackMessage = TrackMessage()
     var tracks = [Track]()
-    
+    var currentPlaylistUiid = ""
     var playlist: [Track] = [Track]()
     
     var trackIndex = -1 {
         didSet {
             if trackIndex < 0
             {
-                print("aa")
+                
                 trackIndex = 0
             }
             if trackIndex > playlist.count - 1
             {
-                print("bb")
+               
                 trackIndex = 0
             }
         }
@@ -278,11 +278,16 @@ extension TrackTool {
         let artist = lockMsg.trackModel?.artist ?? ""
         var image: UIImage
         let fileName = lockMsg.trackModel?.fileName ?? ""
-        if lockMsg.trackModel?.album == "Unknown"
+        
+        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+        let fileURL = documentsDirectory.appendingPathComponent("artwork/" + lockMsg.trackModel!.fileName)
+        
+        if FileManager.default.fileExists(atPath: fileURL.path)
         {
-            image = UIImage(named: "artwork")!
-        } else {
+            
             image = loadImageFromDiskWith(fileName: lockMsg.trackModel!.fileName)!
+        } else {
+            image = UIImage(named: "artwork")!
         }
         
         let artwork = MPMediaItemArtwork.init(boundsSize: (image.size), requestHandler: { (size) -> UIImage in

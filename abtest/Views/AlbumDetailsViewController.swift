@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import SnapKit
 import BCColor
 
 class AlbumDetailsViewController: UIViewController
@@ -94,13 +93,42 @@ class AlbumDetailsViewController: UIViewController
         if (statusBarColor != nil){
             UIApplication.shared.statusBarView?.backgroundColor = statusBarColor
         }
+        if (strechView?.colorView.backgroundColor?.isDark)!
+        {
+            UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.lightContent, animated: false)
+            strechView?.turnBack.tintColor = .white
+        }else{
+            UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.default, animated: false)
+            strechView?.turnBack.tintColor = .black
+        }
+        
+        if TrackTool.shareInstance.isHidden
+        {
+            self.tableBottomConstrain.constant = 0
+            self.view.layoutSubviews()
+        }
+        else
+        {
+            UIView.animate(withDuration: 0.3, animations:
+                {
+                    self.tableBottomConstrain.constant = -67
+                    self.view.layoutSubviews()
+            })
+        }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(true)
+        UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.default, animated: false)
+        UIApplication.shared.statusBarView?.backgroundColor = .white
+    }
     
     @objc func dissmisItself()
     {
         UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.default, animated: false)
+        UIApplication.shared.statusBarView?.backgroundColor = .white
         navigationController?.popViewController(animated: true)
+       
     }
     
     //                             <===================== TableView Configuration Section Begining =====================>
@@ -122,7 +150,7 @@ class AlbumDetailsViewController: UIViewController
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
     {
-        return CGFloat(10)
+        return CGFloat(1)
     }
     
     func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat
@@ -142,6 +170,7 @@ class AlbumDetailsViewController: UIViewController
             
             // <===================== Getting Track Number of All Album Tracks =====================>
             let indexOfTracks = AlbumTracks.firstIndex(of: grabedAlbumtracks)! + 1
+            
             // Format Track Numbers With leading "0" such as 01, 02, 03  .....
             let formatedindex = String(format: "%02d", indexOfTracks)
             cell.songCount.text = formatedindex

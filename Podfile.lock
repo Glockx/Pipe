@@ -1,5 +1,6 @@
 PODS:
   - BCColor (0.2)
+  - Eureka (4.3.1)
   - GCDWebServer/Core (3.5.2)
   - GCDWebServer/WebUploader (3.5.2):
     - GCDWebServer/Core
@@ -13,6 +14,7 @@ PODS:
 
 DEPENDENCIES:
   - BCColor
+  - Eureka
   - GCDWebServer/WebUploader (~> 3.0)
   - MarqueeLabel/Swift
   - NotificationBannerSwift
@@ -23,6 +25,7 @@ DEPENDENCIES:
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - BCColor
+    - Eureka
     - GCDWebServer
     - MarqueeLabel
     - NotificationBannerSwift
@@ -32,6 +35,7 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   BCColor: 2425540cb0da92795b81a1f15b5289a92279c9eb
+  Eureka: 28ea296f06710f6745266b71f17862048941a32d
   GCDWebServer: ead88cd14596dd4eae4f5830b8877c87c8728990
   MarqueeLabel: 440a502b91a9179bd98f9fff00ba1150650a1c0e
   NotificationBannerSwift: 49fc4be7fabada55b189b50e72184c92edd5f7f7
@@ -39,6 +43,6 @@ SPEC CHECKSUMS:
   SwiftyUI: 255012436bd2f7e4ee9c3f36256010a6e1780598
   ViewAnimator: 6eaa112663b6a2d9e6b2573df65b416dd051cbe4
 
-PODFILE CHECKSUM: 6433e56ab2a1977c78757c3622baedeb3496d381
+PODFILE CHECKSUM: 780b6920700686be42c5d0d54498fe666a678c70
 
 COCOAPODS: 1.5.3

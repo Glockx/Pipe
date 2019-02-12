@@ -1,26 +1,25 @@
 //
-//  StrechView.swift
+//  PlaylistDetailsHeaderView.swift
 //  abtest
 //
-//  Created by Muzaffarli Nijat on 29/01/2019.
+//  Created by Muzaffarli Nijat on 07/02/2019.
 //  Copyright © 2019 Nijat Muzaffarli. All rights reserved.
 //
 
 import UIKit
-import SnapKit
 
-class StrechView: UIView
+class PlaylistDetailsHeaderView: UIView
 {
-    @IBOutlet weak var albumArtwork: UIImageView!
-    @IBOutlet weak var albumName: UILabel!
-    @IBOutlet weak var artistName: UILabel!
-    @IBOutlet weak var albumDate: UILabel!
-    @IBOutlet weak var colorView: UIView!
-    
-    @IBOutlet weak var turnBack: UIButton!
-    static let shareInstance = StrechView()
+
     var view: UIView!
-    var abc: String?
+    @IBOutlet weak var playlistName: UILabel!
+    @IBOutlet weak var colorView: UIView!
+    @IBOutlet weak var playlistImage: UIImageView!
+
+    @IBOutlet weak var songCount: UILabel!
+    
+    @IBOutlet weak var editPlaylistButton: UIButton!
+    @IBOutlet weak var goBackButton: UIButton!
     
     override init(frame: CGRect)
     {
@@ -40,11 +39,18 @@ class StrechView: UIView
         view.frame = bounds
         view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         addSubview(view)
-        turnBack.imageEdgeInsets = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
+    }
+    
+    @IBAction func goBack(_ sender: Any)
+    {
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "closePlaylistDetails"), object: nil)
         
     }
     
-    
+    @IBAction func editPlaylist(_ sender: Any)
+    {
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "goToUpdate"), object: nil)
+    }
     
     func loadViewFromNib() -> UIView
     {
@@ -54,9 +60,5 @@ class StrechView: UIView
         
         return view
     }
-    
-    @IBAction func closeView(_ sender: Any)
-    {
-        NotificationCenter.default.post(name: Notification.Name(rawValue: "DismissItself"), object: nil)
-    }
+
 }
