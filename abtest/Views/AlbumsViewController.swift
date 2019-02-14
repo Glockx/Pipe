@@ -10,6 +10,7 @@ import UIKit
 
 class AlbumsViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
 {
+    @IBOutlet weak var tablePlaceholder: UIView!
     @IBOutlet weak var tableView: UITableView!
     var strechView: StrechView?
     var tracks = [Track]()
@@ -35,7 +36,8 @@ class AlbumsViewController: UIViewController,UITableViewDelegate,UITableViewData
        NotificationCenter.default.addObserver(self, selector: #selector(loadTracks), name: Notification.Name(rawValue: "AlbumLoadTrack"), object: nil)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool)
+    {
         super.viewWillAppear(animated)
         UIApplication.shared.statusBarView?.backgroundColor = .white
         
@@ -52,8 +54,18 @@ class AlbumsViewController: UIViewController,UITableViewDelegate,UITableViewData
                     self.view.layoutSubviews()
             })
         }
+        reloadPlaceholder()
     }
     
+    func reloadPlaceholder()
+    {
+        if tableView.numberOfSections <= 0
+        {
+            tablePlaceholder.isHidden = false
+        }else{
+            tablePlaceholder.isHidden = true
+        }
+    }
     
     @objc func loadTracks()
     {
@@ -62,13 +74,20 @@ class AlbumsViewController: UIViewController,UITableViewDelegate,UITableViewData
         tracks = tracks.sorted { $0.album < $1.album}
         
         self.tableView.reloadData()
-        
+        reloadPlaceholder()
     }
     // <================================== tableView Configuration ================================>
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         
         return 1
+    }
+    
+    @IBAction func showMusicLoader(_ sender: Any)
+    {
+        let mainStoryboard = UIStoryboard(name: "Main", bundle: Bundle.main)
+        let vc : SongServerViewController = mainStoryboard.instantiateViewController(withIdentifier: "SongServer") as! SongServerViewController
+        self.present(vc, animated: true, completion: nil)
     }
     
     func numberOfSections(in tableView: UITableView) -> Int
@@ -239,6 +258,7 @@ class AlbumsViewController: UIViewController,UITableViewDelegate,UITableViewData
             NSKeyedArchiver.archiveRootObject(TrackTool.shareInstance.tracks, toFile: ArchiveURL.path)
             
             tableView.endUpdates()
+            self.reloadPlaceholder()
         })
         
         deleteAction.backgroundColor = UIColor(red:0.94, green:0.20, blue:0.20, alpha:1.0)

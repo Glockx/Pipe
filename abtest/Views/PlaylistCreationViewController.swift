@@ -76,7 +76,7 @@ class PlaylistCreationViewController: UIViewController,UIImagePickerControllerDe
             
             UIView.transition(with: view, duration: 0.3, options: .transitionCrossDissolve, animations: {
                 sender.isHidden = true
-                sender.alpha = 1
+                sender.alpha = 0
                 
             })
         }
@@ -180,16 +180,21 @@ class PlaylistCreationViewController: UIViewController,UIImagePickerControllerDe
     {
         if playlistImage.image != nil
         {
-            
-            if (doImagesHaveSameMeta(image1: (loadedImage?.cgImage)!, image2: playlistImage.image!.cgImage!))
+            if loadedImage != nil
             {
-                print("images are same")
-            }else
-            {
-                print("Images are not same")
-                removePlaylistAlbumArtwork(localPathName: (passedPlaylist?.uuid)!)
+                if (doImagesHaveSameMeta(image1: (loadedImage?.cgImage)!, image2: playlistImage.image!.cgImage!))
+                {
+                    print("images are same")
+                }else
+                {
+                    print("Images are not same")
+                    removePlaylistAlbumArtwork(localPathName: (passedPlaylist?.uuid)!)
+                    saveImage(imageName: (passedPlaylist?.uuid)!, image: playlistImage.image!)
+                }
+            }else{
                 saveImage(imageName: (passedPlaylist?.uuid)!, image: playlistImage.image!)
             }
+            
         }
     
         
@@ -409,7 +414,7 @@ class PlaylistCreationViewController: UIViewController,UIImagePickerControllerDe
         }
         
         
-        if selected.count <= 0 {
+        if selected.count == 0 {
             
             UIView.animate(withDuration: 0.3, animations: {
                 self.tableBottom.constant = 0

@@ -19,7 +19,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
-	<string>587</string>
+	<string>760</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -28,11 +28,11 @@
 		<true/>
 	</dict>
 	<key>NSAppleMusicUsageDescription</key>
-	<string>let us use</string>
+	<string>Need Access For Playing Music</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Let me</string>
+	<string>Need Access for Taking Photo</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Let me use</string>
+	<string>Need Access for Choosing Images from Photo Library</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>

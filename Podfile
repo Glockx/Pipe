@@ -14,4 +14,5 @@ pod 'BCColor'
 pod 'NotificationBannerSwift'
 pod 'SwiftyUI'
 pod 'Eureka'
+pod 'SPPermission'
 end

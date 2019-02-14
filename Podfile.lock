@@ -9,6 +9,7 @@ PODS:
     - MarqueeLabel/Swift (~> 3.2.0)
     - SnapKit (~> 4.0.1)
   - SnapKit (4.0.1)
+  - SPPermission (2.9.4)
   - SwiftyUI (1.6.0)
   - ViewAnimator (2.2.2)
 
@@ -19,6 +20,7 @@ DEPENDENCIES:
   - MarqueeLabel/Swift
   - NotificationBannerSwift
   - SnapKit (~> 4.0.0)
+  - SPPermission
   - SwiftyUI
   - ViewAnimator
 
@@ -30,6 +32,7 @@ SPEC REPOS:
     - MarqueeLabel
     - NotificationBannerSwift
     - SnapKit
+    - SPPermission
     - SwiftyUI
     - ViewAnimator
 
@@ -40,9 +43,10 @@ SPEC CHECKSUMS:
   MarqueeLabel: 440a502b91a9179bd98f9fff00ba1150650a1c0e
   NotificationBannerSwift: 49fc4be7fabada55b189b50e72184c92edd5f7f7
   SnapKit: 0de968a9fec17499afa29683b05d0c775b6d1c29
+  SPPermission: 7c03fcc091f0f0bae7538b3fd87afcbd2634ca18
   SwiftyUI: 255012436bd2f7e4ee9c3f36256010a6e1780598
   ViewAnimator: 6eaa112663b6a2d9e6b2573df65b416dd051cbe4
 
-PODFILE CHECKSUM: 780b6920700686be42c5d0d54498fe666a678c70
+PODFILE CHECKSUM: f446fc3af6dca3680fbc3b4833ce0d22882650b8
 
 COCOAPODS: 1.5.3

@@ -13,6 +13,7 @@ class PlaylistViewController: UIViewController, UITableViewDelegate, UITableView
 
     @IBOutlet weak var tableBottomConstrain: NSLayoutConstraint!
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var playlistPlaceholder: UIView!
     
     override func viewDidLoad()
     {
@@ -48,13 +49,23 @@ class PlaylistViewController: UIViewController, UITableViewDelegate, UITableView
                     self.view.layoutSubviews()
             })
         }
-        
+        reloadPlaceholder()
+    }
+    
+    func reloadPlaceholder()
+    {
+        if tableView.numberOfSections <= 0 {
+            playlistPlaceholder.isHidden = false
+        }else{
+            playlistPlaceholder.isHidden = true
+        }
     }
     
     @objc func reloadTable()
     {
         PlaylistTool.shareInstance.playlists = PlaylistTool.shareInstance.playlists
         tableView.reloadData()
+        reloadPlaceholder()
     }
     // <================================== tableView Configuration Begining ================================>
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
@@ -65,7 +76,6 @@ class PlaylistViewController: UIViewController, UITableViewDelegate, UITableView
     
     func numberOfSections(in tableView: UITableView) -> Int
     {
-        
         return PlaylistTool.shareInstance.playlists.count
     }
 
@@ -139,6 +149,7 @@ class PlaylistViewController: UIViewController, UITableViewDelegate, UITableView
             let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
             let ArchiveURL = DocumentsDirectory.appendingPathComponent("Playlists")
             NSKeyedArchiver.archiveRootObject(PlaylistTool.shareInstance.playlists, toFile: ArchiveURL.path)
+            self.reloadPlaceholder()
         })
         
         deleteAction.backgroundColor = UIColor(red:0.94, green:0.20, blue:0.20, alpha:1.0)

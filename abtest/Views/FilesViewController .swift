@@ -10,12 +10,14 @@ import UIKit
 import AVFoundation
 import MarqueeLabel
 import ViewAnimator
-
+import SPPermission
 
 class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDataSource {
 
 
     
+    @IBOutlet weak var tablePlaceholder: UIView!
+    @IBOutlet weak var placeholderFileImage: UIImageView!
     @IBOutlet weak var tableViewBottom: NSLayoutConstraint!
     @IBOutlet weak var tableView: UITableView!
     
@@ -28,9 +30,13 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
     var documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
     let fileManager = FileManager.default
     
-    override func viewDidLoad() {
+    override func viewDidLoad()
+    {
         super.viewDidLoad()
-
+        
+        placeholderFileImage.image = placeholderFileImage.image?.withRenderingMode(.alwaysTemplate)
+        placeholderFileImage.tintColor = UIColor.lightGray
+        
         tableView.dataSource = self
         tableView.delegate = self
      
@@ -59,9 +65,18 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
         NotificationCenter.default.addObserver(self, selector: #selector(playnext), name: NSNotification.Name(rawValue: trackFinish), object: nil)
     }
     
+    override func viewDidAppear(_ animated: Bool)
+    {
+        super.viewDidAppear(true)
+        if UserDefaults.isFirstLaunch(){
+            SPPermission.Dialog.request(with: [.camera, .photoLibrary, .mediaLibrary], on: self)
+        }
+    }
+    
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(animated)
+        
         
         if TrackTool.shareInstance.isHidden
         {
@@ -80,6 +95,7 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
         NotificationCenter.default.post(name: Notification.Name(rawValue: "updateIcon"), object: nil)
         UIApplication.shared.statusBarView?.backgroundColor = .white
         tracks.sort { $0.fileName < $1.fileName}
+        reloadPlaceHolder()
     }
     
     @objc func justEnteredToApp()
@@ -88,6 +104,20 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
         NotificationCenter.default.post(name: Notification.Name(rawValue: "updateIcon"), object: nil)
     }
     
+    
+    func reloadPlaceHolder()
+    {
+        if tableView.numberOfSections <= 0
+        {
+            print("table is empty")
+            tablePlaceholder.isHidden = false
+        }
+        else
+        {
+            tablePlaceholder.isHidden = true
+            print("table view cell count:", tableView.numberOfSections)
+        }
+    }
     
     @objc func playnext()
     {
@@ -99,6 +129,7 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
 
         tracks = TrackTool.shareInstance.tracks.sorted { $0.album < $1.album}
        tableView.reloadData()
+        reloadPlaceHolder()
     }
     
     //number of table cells
@@ -253,7 +284,8 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
 
                 //reload table
                 tableView.reloadData()
-                
+                self.reloadPlaceHolder()
+            
                 //First,checking that if miniPlayer is hidden for not playing song automaticlly
                 if !TrackTool.shareInstance.isHidden
                 {

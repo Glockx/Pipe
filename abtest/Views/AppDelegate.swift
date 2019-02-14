@@ -21,7 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let file = URL.createFolder(folderName: "tracks")
         let folder = URL.createFolder(folderName: "artwork")
-        
+        //UserDefaults.standard.removeObject(forKey: "hasBeenLaunchedBeforeFlag")
         UIApplication.shared.statusBarView?.backgroundColor = UIColor.white
         TrackTool.shareInstance.tracks = loadSongs() ?? TrackTool.shareInstance.tracks
         PlaylistTool.shareInstance.playlists = loadPlaylists() ?? PlaylistTool.shareInstance.playlists
@@ -80,6 +80,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
+    func application(_ application: UIApplication, shouldSaveApplicationState coder: NSCoder) -> Bool
+    {
+       return true
+    }
+    
+    func application(_ application: UIApplication, shouldRestoreApplicationState coder: NSCoder) -> Bool
+    {
+       return true
+    }
     
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
