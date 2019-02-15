@@ -42,8 +42,9 @@ class TimerViewController: UIViewController {
         {
             timeLabel.text = astringFromTimeInterval(interval: TimerTool.shareInstance.timeRemaning)
             TimerTool.shareInstance.timer.invalidate()
+            UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
             TimerTool.shareInstance.timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timerRunning), userInfo: nil, repeats: true)
-            
+            RunLoop.current.add(TimerTool.shareInstance.timer, forMode: RunLoopMode.commonModes)
         }
        
     }
@@ -68,7 +69,9 @@ class TimerViewController: UIViewController {
         if !TimerTool.shareInstance.timerIsOn {
              TimerTool.shareInstance.timeRemaning = timer.countDownDuration
             
+            UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
             TimerTool.shareInstance.timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timerRunning), userInfo: nil, repeats: true)
+            RunLoop.current.add(TimerTool.shareInstance.timer, forMode: RunLoopMode.commonModes)
             //3
             TimerTool.shareInstance.timerIsOn = true
             
@@ -153,7 +156,9 @@ class TimerViewController: UIViewController {
         else
         {
             print("I am deselected.")
+            UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
             TimerTool.shareInstance.timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timerRunning), userInfo: nil, repeats: true)
+            RunLoop.current.add(TimerTool.shareInstance.timer, forMode: RunLoopMode.commonModes)
             TimerTool.shareInstance.timerIsOn = true
         }
         

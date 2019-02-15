@@ -409,8 +409,9 @@ class MusicPlayerViewController: UIViewController {
         }
     }
 
-    func progressTimer() {
-        popupTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) {
+    func progressTimer()
+    {
+        popupTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) {
             timer in
             let track = TrackTool.shareInstance.getTrackMessage()
             let status = UIApplication.shared.applicationState
@@ -439,36 +440,36 @@ class MusicPlayerViewController: UIViewController {
 
 extension MusicPlayerViewController
 {
-    override func remoteControlReceived(with event: UIEvent?) {
-
-        guard let event = event else {
-            print("No event")
-            return
-        }
-
-        guard event.type == UIEventType.remoteControl else {
-            print("Received other control type")
-            return
-        }
-        switch event.subtype {
-        case UIEventSubtype.remoteControlPlay:
-
-            TrackTool.shareInstance.playCurrnetTrack()
-        case UIEventSubtype.remoteControlPause:
-            TrackTool.shareInstance.pauseTrack()
-            
-        case UIEventSubtype.remoteControlNextTrack:
-            TrackTool.shareInstance.nextTrack()
-            
-        case UIEventSubtype.remoteControlPreviousTrack:
-            determinePreviousPressed()
-            TrackTool.shareInstance.setupLockScreen()
-            
-        default:
-            print("")
-        }
-        setupTrackDetails()
-    }
+//    override func remoteControlReceived(with event: UIEvent?) {
+//
+//        guard let event = event else {
+//            print("No event")
+//            return
+//        }
+//
+//        guard event.type == UIEventType.remoteControl else {
+//            print("Received other control type")
+//            return
+//        }
+//        switch event.subtype {
+//        case UIEventSubtype.remoteControlPlay:
+//
+//            TrackTool.shareInstance.playCurrnetTrack()
+//        case UIEventSubtype.remoteControlPause:
+//            TrackTool.shareInstance.pauseTrack()
+//
+//        case UIEventSubtype.remoteControlNextTrack:
+//            TrackTool.shareInstance.nextTrack()
+//
+//        case UIEventSubtype.remoteControlPreviousTrack:
+//            determinePreviousPressed()
+//            TrackTool.shareInstance.setupLockScreen()
+//
+//        default:
+//            print("")
+//        }
+//        setupTrackDetails()
+//    }
     /*
     override func motionBegan(_ motion: UIEventSubtype, with event: UIEvent?) {
         TrackTool.shareInstance.nextTrack()

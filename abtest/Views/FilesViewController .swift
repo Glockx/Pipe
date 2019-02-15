@@ -549,36 +549,36 @@ extension FilesViewController {
         
     }
     
-    override func remoteControlReceived(with event: UIEvent?) {
-
-        guard let event = event else {
-            print("No event")
-            return
-        }
-
-        guard event.type == UIEventType.remoteControl else {
-            print("Received other control type")
-            return
-        }
-
-        switch event.subtype {
-        case UIEventSubtype.remoteControlPlay:
-            print("play")
-            TrackTool.shareInstance.playCurrnetTrack()
-        case UIEventSubtype.remoteControlPause:
-            TrackTool.shareInstance.pauseTrack()
-            //timer.invalidate()
-            print("pause")
-        case UIEventSubtype.remoteControlNextTrack:
-            TrackTool.shareInstance.nextTrack()
-            print("next")
-        case UIEventSubtype.remoteControlPreviousTrack:
-            determinePreviousPressed()
-            print("previous")
-        default:
-            print("")
-        }
-    }
+//    override func remoteControlReceived(with event: UIEvent?) {
+//
+//        guard let event = event else {
+//            print("No event")
+//            return
+//        }
+//
+//        guard event.type == UIEventType.remoteControl else {
+//            print("Received other control type")
+//            return
+//        }
+//
+//        switch event.subtype {
+//        case UIEventSubtype.remoteControlPlay:
+//            print("play")
+//            TrackTool.shareInstance.playCurrnetTrack()
+//        case UIEventSubtype.remoteControlPause:
+//            TrackTool.shareInstance.pauseTrack()
+//            //timer.invalidate()
+//            print("pause")
+//        case UIEventSubtype.remoteControlNextTrack:
+//            TrackTool.shareInstance.nextTrack()
+//            print("next")
+//        case UIEventSubtype.remoteControlPreviousTrack:
+//            determinePreviousPressed()
+//            print("previous")
+//        default:
+//            print("")
+//        }
+//    }
 }
 
 class SongCell: UITableViewCell

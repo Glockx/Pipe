@@ -22,6 +22,8 @@ class TrackTool: NSObject , AVAudioPlayerDelegate{
     var currentPlaylistUiid = ""
     var playlist: [Track] = [Track]()
     
+    @objc dynamic var isZero: TimeInterval = 0.0
+    
     var trackIndex = -1 {
         didSet {
             if trackIndex < 0
@@ -37,6 +39,8 @@ class TrackTool: NSObject , AVAudioPlayerDelegate{
         }
     }
     
+    
+    
     override init() {
         super.init()
         
@@ -45,6 +49,7 @@ class TrackTool: NSObject , AVAudioPlayerDelegate{
             try session.setCategory(AVAudioSessionCategoryPlayback)
             
             try session.setActive(true)
+            setupRemoteTransportControls()
         } catch {
             print(error)
             return
@@ -154,6 +159,7 @@ class TrackTool: NSObject , AVAudioPlayerDelegate{
     func playCurrentTrackAgain()
     {
         trackPlayer?.currentTime = 0.0
+        
     }
     
     //pause track
@@ -184,17 +190,17 @@ class TrackTool: NSObject , AVAudioPlayerDelegate{
     //activate repeat button
     func activateRepeat()
     {
-            isRepeated = true
-            trackPlayer?.numberOfLoops = -1
+        isRepeated = true
+        trackPlayer?.numberOfLoops = -1
         setupLockScreen()
     }
     //deactivate repeat button
     func deactiveRepeat()
-        {
-            isRepeated = false
-            trackPlayer?.numberOfLoops = 0
-            setupLockScreen()
-        }
+    {
+        isRepeated = false
+        trackPlayer?.numberOfLoops = 0
+        setupLockScreen()
+    }
     
     func setProgress(currentProgress : CGFloat) {
         let progress = (trackPlayer?.currentTime)! / (trackPlayer?.duration)!
@@ -217,8 +223,10 @@ class TrackTool: NSObject , AVAudioPlayerDelegate{
         }
     }
     
-    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool)
+    {
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: trackFinish), object: self, userInfo: nil)
+        setupLockScreen()
     }
     
     func setupShuffleButton(button: UIButton){
@@ -271,6 +279,34 @@ class TrackTool: NSObject , AVAudioPlayerDelegate{
 
 
 extension TrackTool {
+    
+    
+    
+    
+    func determinePreviousPressed()
+    {
+        let track = getTrackMessage()
+        if(TimeFormat.getFormatTime(timerInval: track.currentTime) == "0:00")
+        {
+            doubleTapped()
+        }
+        else
+        {
+            singleTapped()
+        }
+        TrackTool.shareInstance.setupLockScreen()
+    }
+    
+    @objc func singleTapped() {
+        
+        playCurrentTrackAgain()
+        //setupTrackDetails()
+    }
+    
+    @objc func doubleTapped() {
+       previousTrack()
+    }
+    
     func setupLockScreen() {
         let lockMsg = getTrackMessage()
         let centerInfo = MPNowPlayingInfoCenter.default()
@@ -313,7 +349,33 @@ extension TrackTool {
         
         UIApplication.shared.beginReceivingRemoteControlEvents()
     }
+    
     func stopLockScreen(){
         UIApplication.shared.endReceivingRemoteControlEvents()
+    }
+    
+    func setupRemoteTransportControls() {
+        let commandCenter = MPRemoteCommandCenter.shared()
+        
+        commandCenter.playCommand.isEnabled = true
+        commandCenter.pauseCommand.isEnabled = true
+        commandCenter.previousTrackCommand.isEnabled = true
+        commandCenter.nextTrackCommand.isEnabled = true
+        commandCenter.playCommand.addTarget{[weak self] (event) -> MPRemoteCommandHandlerStatus in
+            self!.playCurrnetTrack()
+            return .success
+        }
+        commandCenter.pauseCommand.addTarget{[weak self] (event) -> MPRemoteCommandHandlerStatus in
+            self?.pauseTrack()
+            return .success
+        }
+        commandCenter.previousTrackCommand.addTarget{[weak self] (event) -> MPRemoteCommandHandlerStatus in
+            self?.determinePreviousPressed()
+            return .success
+        }
+        commandCenter.nextTrackCommand.addTarget{[weak self] (event) -> MPRemoteCommandHandlerStatus in
+            self!.nextTrack()
+            return .success
+        }
     }
 }

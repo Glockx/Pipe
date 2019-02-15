@@ -197,6 +197,11 @@ extension MiniPlayerView
             } else {
                 return
             }
+            if TrackTool.shareInstance.isRepeated && TrackTool.shareInstance.trackPlayer!.currentTime < 1.0 {
+                TrackTool.shareInstance.setupLockScreen()
+               debugPrint(TrackTool.shareInstance.trackPlayer?.currentTime)
+            }
+            
         }
     }
     
