@@ -197,9 +197,9 @@ extension MiniPlayerView
             } else {
                 return
             }
+            // if Repeat mode is and song replayed update the lockscreen otherwise same song will be played and lockscreen music info center details are not gonna change
             if TrackTool.shareInstance.isRepeated && TrackTool.shareInstance.trackPlayer!.currentTime < 1.0 {
                 TrackTool.shareInstance.setupLockScreen()
-               debugPrint(TrackTool.shareInstance.trackPlayer?.currentTime)
             }
             
         }

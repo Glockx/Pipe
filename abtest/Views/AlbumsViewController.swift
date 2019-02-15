@@ -206,6 +206,7 @@ class AlbumsViewController: UIViewController,UITableViewDelegate,UITableViewData
                         playlist.totalTime = calculateTotalTime(tracks: playlist.tracks)
                     }
                 }
+                
                 if TrackTool.shareInstance.playlist.contains(element){
                     TrackTool.shareInstance.playlist.removeAll(where: {$0.fileName == element.fileName})
                 }
@@ -247,7 +248,7 @@ class AlbumsViewController: UIViewController,UITableViewDelegate,UITableViewData
             NotificationCenter.default.post(name: Notification.Name(rawValue: "loadtracks"), object: nil)
             NotificationCenter.default.post(name: Notification.Name(rawValue: "ReloadPlaylistTable"), object: nil)
             NotificationCenter.default.post(name: Notification.Name(rawValue: "updateRemovedTracks-PlaylistDetailsView"), object: nil)
-            
+            NotificationCenter.default.post(name: Notification.Name(rawValue: "updateUsedSize"), object: nil)
             
             let DocumentsDirectorya = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
             let ArchiveURLa = DocumentsDirectorya.appendingPathComponent("Playlists")

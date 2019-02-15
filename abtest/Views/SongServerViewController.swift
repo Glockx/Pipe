@@ -88,7 +88,8 @@ class SongServerViewController: UIViewController
         loadSongs(handleComplete: saveData)
         
         NotificationCenter.default.post(name: Notification.Name(rawValue: "loadtracks"), object: nil)
-       NotificationCenter.default.post(name: Notification.Name(rawValue: "AlbumLoadTrack"), object: nil)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "AlbumLoadTrack"), object: nil)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: "updateUsedSize"), object: nil)
         dismiss(animated: true, completion: nil)
     }
 }

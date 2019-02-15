@@ -1239,7 +1239,7 @@
                             </navigationBar>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="6Sp-Ls-WWw">
                                 <rect key="frame" x="0.0" y="105" width="375" height="513"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="backgroundColor" red="0.99607843137254903" green="1" blue="0.99607843137254903" alpha="1" colorSpace="calibratedRGB"/>
                                 <color key="separatorColor" red="0.92549019607843142" green="0.92549019607843142" blue="0.92549019607843142" alpha="1" colorSpace="calibratedRGB"/>
                                 <sections/>
                             </tableView>
@@ -1258,6 +1258,7 @@
                     </view>
                     <navigationItem key="navigationItem" title="Settings" largeTitleDisplayMode="always" id="BjO-uA-Bpn"/>
                     <connections>
+                        <outlet property="tableBottomConstrain" destination="K0Y-nB-BzT" id="97A-zo-JL7"/>
                         <outlet property="tableView" destination="6Sp-Ls-WWw" id="LQb-x9-vrX"/>
                     </connections>
                 </viewController>
@@ -1649,7 +1650,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Gwx-JZ-9DS" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-4852" y="427"/>
+            <point key="canvasLocation" x="-4831" y="463"/>
         </scene>
         <!--Playlist Details View Controller-->
         <scene sceneID="GkJ-8B-hUx">

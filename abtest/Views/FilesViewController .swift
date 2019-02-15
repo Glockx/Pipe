@@ -128,7 +128,7 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
     @objc func loadTracks() {
 
         tracks = TrackTool.shareInstance.tracks.sorted { $0.album < $1.album}
-       tableView.reloadData()
+        tableView.reloadData()
         reloadPlaceHolder()
     }
     
@@ -255,7 +255,7 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
                 self.tracks.remove(at: indexPath.section)
             
             // !IMPORTANT: It's should be checked that removed track is last track of array for restarting index array to first item in the list otherwise it won't play first song in the list (Dont't remove this line)
-            if TrackTool.shareInstance.trackPlayer!.isPlaying
+            if !TrackTool.shareInstance.isHidden
             {
                 print("end index:",TrackTool.shareInstance.playlist.endIndex)
                 print("current index:", TrackTool.shareInstance.findCurrentTrackIndex())
@@ -329,6 +329,7 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
                 //update playlist object and playlist view controller
                 NotificationCenter.default.post(name: Notification.Name(rawValue: "ReloadPlaylistTable"), object: nil)
                 NotificationCenter.default.post(name: Notification.Name(rawValue: "updateRemovedTracks-PlaylistDetailsView"), object: nil)
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "updateUsedSize"), object: nil)
             
                 let DocumentsDirectorya = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
                 let ArchiveURLa = DocumentsDirectorya.appendingPathComponent("Playlists")
@@ -473,7 +474,7 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
         let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString
         let destinationPath = documentsPath.appendingPathComponent("artwork/" + localPathName)
         do { try filemanager.removeItem(atPath: destinationPath)
-            
+            print("deleted")
         }
         catch { print("Not Deleted") }
     }
@@ -517,8 +518,8 @@ extension FilesViewController {
             
             self.firstTime = false
             NotificationCenter.default.post(name: Notification.Name(rawValue: "showPlayer"), object: nil)
-            TrackTool.shareInstance.isHidden = false
         }
+        TrackTool.shareInstance.isHidden = false
         NotificationCenter.default.post(name: Notification.Name(rawValue: "updatePlayer"), object: nil)
         NotificationCenter.default.post(name: Notification.Name(rawValue: "updateIcon"), object: nil)
         
