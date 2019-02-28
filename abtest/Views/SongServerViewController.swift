@@ -12,38 +12,33 @@ import GCDWebServer
 class SongServerViewController: UIViewController
 {
     
+    @IBOutlet weak var browserImage: UIImageView!
+    
     @IBOutlet weak var LinkField: UITextField!
     @IBOutlet weak var progressLabel: UILabel!
-    var davServer: GCDWebServer?
+    var davServer: GCDWebUploader?
     var documentsPath = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!.path
     
     @IBOutlet weak var serverLabel: UITextField!
     override func viewDidLoad() {
         super.viewDidLoad()
         
+//        browserImage.image = browserImage.image?.withRenderingMode(.alwaysTemplate)
+//        browserImage.tintColor = UIColor.lightGray
         serverTextField.adjustsFontSizeToFitWidth = true
-        // Do any additional setup after loading the view.
-        initServer()
+        DispatchQueue.main.async
+            {
+        GCDWebUploaderTool.shareInstance.startServer
+            {
+                self.serverTextField.text = GCDWebUploaderTool.shareInstance.davServer?.serverURL?.absoluteString
+            }
+        }
         hideKeyboardWhenTappedAround()
+        
     }
     
     @IBOutlet weak var serverTextField: UITextField!
-    
-    func initServer()
-    {
-        guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
-        let fileURL = documentsDirectory.appendingPathComponent("tracks/").path
-        
-        davServer = GCDWebUploader(uploadDirectory: documentsPath)
-        
-        
-        DispatchQueue.main.async {
-            self.davServer?.start(withPort: 8080, bonjourName: "web upload")
-            self.serverTextField.text = self.davServer?.serverURL?.absoluteString
-        }
-        
-    }
-    
+
     var filePath: String {
         //1 - manager lets you examine contents of a files and folders in your app; creates a directory to where we are saving it
         let manager = FileManager.default
@@ -84,7 +79,7 @@ class SongServerViewController: UIViewController
     
     @IBAction func TransferDone(_ sender: Any)
     {
-        davServer?.stop()
+        GCDWebUploaderTool.shareInstance.stopServer()
         loadSongs(handleComplete: saveData)
         
         NotificationCenter.default.post(name: Notification.Name(rawValue: "loadtracks"), object: nil)

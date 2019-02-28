@@ -612,6 +612,14 @@ func stringFromTimeInterval(timerInval : TimeInterval) -> String
     
 }
 
+func stringFromTimeIntervalJustMinutes(timerInval : TimeInterval) -> String
+{
+    let seconds =  Int(timerInval) % 60
+    let minutes =  (Int(timerInval) / 60) % 60
+    
+    return String(format: "%0.2d:%0.2d",minutes,seconds)
+}
+
 
 // Grabbing songs' durations and get total length
 func calculateTotalTime(tracks: [Track]) -> String
@@ -631,6 +639,17 @@ func calculateTotalTime(tracks: [Track]) -> String
     return stringFromTimeInterval(timerInval: totalDuration)
 }
 
+func calculateSongDuration(track : Track) -> String {
+    let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
+    let fileURL = documentsDirectory!.appendingPathComponent("tracks/" + track.fileName + ".mp3")
+    
+    let audioAsset = AVURLAsset.init(url: fileURL, options: nil)
+    let audioDuration = audioAsset.duration
+    let audioDurationSeconds = CMTimeGetSeconds(audioDuration)
+    
+    return stringFromTimeIntervalJustMinutes(timerInval: audioDurationSeconds)
+}
+
 extension UserDefaults {
     // check for is first launch - only true on first invocation after app install, false on all further invocations
     // Note: Store this value in AppDelegate if you have multiple places where you are checking for this flag
@@ -642,6 +661,16 @@ extension UserDefaults {
             UserDefaults.standard.synchronize()
         }
         return isFirstLaunch
+    }
+    
+    static func isPurchasedNoAds() -> Bool{
+        let hasPurchasedNoAds = "hasPurchasedNoAds"
+        let isPurchased = !UserDefaults.standard.bool(forKey: hasPurchasedNoAds)
+        if(isPurchased){
+            UserDefaults.standard.set(true, forKey: hasPurchasedNoAds)
+            UserDefaults.standard.synchronize()
+        }
+        return isPurchased
     }
 }
 
@@ -850,5 +879,90 @@ fileprivate extension URL {
         // In case totalFileAllocatedSize is unavailable we use the fallback value (excluding
         // meta data and compression) This value should always be available.
         return UInt64(resourceValues.totalFileAllocatedSize ?? resourceValues.fileAllocatedSize ?? 0)
+    }
+}
+
+extension UIView {
+    func applyGradientToCell(colours: [UIColor],bounds: UITableViewCell) -> Void {
+        let gradient: CAGradientLayer = CAGradientLayer()
+        gradient.name = "gradient"
+        gradient.frame = bounds.contentView.bounds
+        gradient.colors = colours.map { $0.cgColor }
+        gradient.startPoint = CGPoint(x : 0.0, y : 0.5)
+        gradient.endPoint = CGPoint(x :1.0, y: 0.5)
+        self.layer.insertSublayer(gradient, at: 0)
+    }
+    
+    func applyGradient(colours: [UIColor]) -> Void {
+        let gradient: CAGradientLayer = CAGradientLayer()
+        gradient.name = "gradient"
+        gradient.frame = self.bounds
+        gradient.colors = colours.map { $0.cgColor }
+        gradient.startPoint = CGPoint(x : 0.0, y : 0.5)
+        gradient.endPoint = CGPoint(x :1.0, y: 0.5)
+        self.layer.insertSublayer(gradient, at: 0)
+    }
+}
+
+extension UIColor {
+    convenience init(hexFromString:String, alpha:CGFloat = 1.0) {
+        var cString:String = hexFromString.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        var rgbValue:UInt32 = 10066329 //color #999999 if string has wrong format
+        
+        if (cString.hasPrefix("#")) {
+            cString.remove(at: cString.startIndex)
+        }
+        
+        if ((cString.count) == 6) {
+            Scanner(string: cString).scanHexInt32(&rgbValue)
+        }
+        
+        self.init(
+            red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+            green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+            blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+            alpha: alpha
+        )
+    }
+}
+
+
+@IBDesignable
+open class GradientView: UIView {
+    @IBInspectable
+    public var startColor: UIColor = .white {
+        didSet {
+            gradientLayer.colors = [startColor.cgColor, endColor.cgColor]
+            setNeedsDisplay()
+        }
+    }
+    @IBInspectable
+    public var endColor: UIColor = .white {
+        didSet {
+            gradientLayer.colors = [startColor.cgColor, endColor.cgColor]
+            setNeedsDisplay()
+        }
+    }
+    
+    private lazy var gradientLayer: CAGradientLayer = {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = self.bounds
+        gradientLayer.colors = [self.startColor.cgColor, self.endColor.cgColor]
+        return gradientLayer
+    }()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        layer.insertSublayer(gradientLayer, at: 0)
+    }
+    
+    public required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        layer.insertSublayer(gradientLayer, at: 0)
+    }
+    
+    open override func layoutSubviews() {
+        super.layoutSubviews()
+        gradientLayer.frame = bounds
     }
 }

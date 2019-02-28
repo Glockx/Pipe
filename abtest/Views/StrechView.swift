@@ -8,15 +8,22 @@
 
 import UIKit
 import SnapKit
+import GoogleMobileAds
 
-class StrechView: UIView
+class StrechView: UIView,GADBannerViewDelegate
 {
+    
+    enum ObfuscatedConstants {
+        static let obfuscatedString: [UInt8] = [34, 17, 93, 37, 21, 28, 72, 23, 20, 22, 72, 125, 103, 122, 80, 94, 80, 80, 68, 114, 73, 73, 114, 92, 92, 87, 95, 78, 71, 84, 127, 106, 122, 87, 94, 86, 80, 67]
+    }
+    
+    @IBOutlet var adBanner: GADBannerView!
     @IBOutlet weak var albumArtwork: UIImageView!
     @IBOutlet weak var albumName: UILabel!
     @IBOutlet weak var artistName: UILabel!
     @IBOutlet weak var albumDate: UILabel!
     @IBOutlet weak var colorView: UIView!
-    
+    let obfuscator = Obfuscator()
     @IBOutlet weak var turnBack: UIButton!
     static let shareInstance = StrechView()
     var view: UIView!
@@ -42,9 +49,28 @@ class StrechView: UIView
         addSubview(view)
         turnBack.imageEdgeInsets = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
         
+        NotificationCenter.default.addObserver(self, selector: #selector(startAds),name: NSNotification.Name(rawValue: "AlbumDetailsstartAds"), object: nil)
+
     }
     
     
+   @objc func startAds()
+    {
+        let mainStoryboard = UIStoryboard(name: "Main", bundle: Bundle.main)
+        let vc : AlbumDetailsViewController = mainStoryboard.instantiateViewController(withIdentifier: "AlbumDetails") as! AlbumDetailsViewController
+        
+       
+        ADTool.shareInstance.showBanner(adBanner: adBanner, rootController: vc, bannerID: "ca-app-pub-3452453039969028/3119554337", bannerSize: kGADAdSizeSmartBannerPortrait)
+    }
+    
+    func adViewDidReceiveAd(_ bannerView: GADBannerView) {
+        adBanner.isHidden = false
+    }
+    
+    func adView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: GADRequestError) {
+        print("Fail to receive ads")
+        print(error)
+    }
     
     func loadViewFromNib() -> UIView
     {

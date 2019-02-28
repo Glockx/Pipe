@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.59" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.45"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.14"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="PlaylistDetailsHeaderView" customModule="abtest" customModuleProvider="target">
             <connections>
+                <outlet property="adBanner" destination="aIu-nh-drj" id="Uv3-iL-HIP"/>
                 <outlet property="colorView" destination="0n3-XK-Yit" id="6F4-Jd-Dfa"/>
                 <outlet property="editPlaylistButton" destination="T4c-S3-eAF" id="aUj-c9-GuB"/>
                 <outlet property="goBackButton" destination="Nr5-8K-1kD" id="DoZ-7J-q9q"/>
@@ -22,11 +23,11 @@
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="iN0-l3-epB">
-            <rect key="frame" x="0.0" y="0.0" width="375" height="300"/>
+            <rect key="frame" x="0.0" y="0.0" width="375" height="340"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="0n3-XK-Yit">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="300"/>
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="340"/>
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Nr5-8K-1kD">
                             <rect key="frame" x="8" y="8" width="22" height="22"/>
@@ -63,7 +64,7 @@
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="5 Song in list" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rm2-So-IF0">
                             <rect key="frame" x="8" y="251" width="359" height="21"/>
                             <constraints>
-                                <constraint firstAttribute="height" constant="21" id="gm2-7e-jMB"/>
+                                <constraint firstAttribute="height" constant="21" id="ZaZ-1p-mMe"/>
                             </constraints>
                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                             <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -72,7 +73,7 @@
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Playlist Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="14P-Ww-H7V">
                             <rect key="frame" x="8" y="221" width="359" height="32"/>
                             <constraints>
-                                <constraint firstAttribute="height" constant="32" id="hXh-37-8XE"/>
+                                <constraint firstAttribute="height" constant="32" id="7CF-LF-KdN"/>
                             </constraints>
                             <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                             <nil key="textColor"/>
@@ -81,8 +82,8 @@
                         <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="artwork" translatesAutoresizingMaskIntoConstraints="NO" id="qj7-sS-Rzf">
                             <rect key="frame" x="100" y="45" width="176" height="166"/>
                             <constraints>
-                                <constraint firstAttribute="width" constant="176" id="YeF-6S-Rw2"/>
-                                <constraint firstAttribute="height" constant="166" id="qcG-YH-MDc"/>
+                                <constraint firstAttribute="width" constant="176" id="dyq-Pr-uoR"/>
+                                <constraint firstAttribute="height" constant="166" id="eTj-bs-CDy"/>
                             </constraints>
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="number" keyPath="shadowRadius">
@@ -96,25 +97,32 @@
                                 </userDefinedRuntimeAttribute>
                             </userDefinedRuntimeAttributes>
                         </imageView>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aIu-nh-drj" customClass="GADBannerView">
+                            <rect key="frame" x="8" y="282" width="359" height="50"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </view>
                     </subviews>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
-                        <constraint firstAttribute="bottom" secondItem="rm2-So-IF0" secondAttribute="bottom" constant="28" id="0UZ-bh-5Ns"/>
                         <constraint firstItem="T4c-S3-eAF" firstAttribute="top" secondItem="0n3-XK-Yit" secondAttribute="top" constant="8" id="5kF-bx-FBG"/>
-                        <constraint firstItem="14P-Ww-H7V" firstAttribute="leading" secondItem="0n3-XK-Yit" secondAttribute="leading" constant="8" id="7ST-Gu-e1q"/>
-                        <constraint firstItem="qj7-sS-Rzf" firstAttribute="leading" secondItem="0n3-XK-Yit" secondAttribute="leading" constant="100" id="J36-bh-n2Q"/>
+                        <constraint firstAttribute="trailing" secondItem="14P-Ww-H7V" secondAttribute="trailing" constant="8" id="9bv-ac-Yck"/>
+                        <constraint firstItem="rm2-So-IF0" firstAttribute="leading" secondItem="0n3-XK-Yit" secondAttribute="leading" constant="8" id="A9c-zr-PjS"/>
+                        <constraint firstAttribute="trailing" secondItem="aIu-nh-drj" secondAttribute="trailing" constant="8" id="ASD-Vr-7l2"/>
+                        <constraint firstItem="14P-Ww-H7V" firstAttribute="top" secondItem="qj7-sS-Rzf" secondAttribute="bottom" constant="10" id="CDG-4y-C18"/>
+                        <constraint firstItem="14P-Ww-H7V" firstAttribute="leading" secondItem="0n3-XK-Yit" secondAttribute="leading" constant="8" id="Cn4-0J-MSo"/>
+                        <constraint firstItem="aIu-nh-drj" firstAttribute="leading" secondItem="0n3-XK-Yit" secondAttribute="leading" constant="8" id="D9u-yi-WbL"/>
                         <constraint firstItem="Nr5-8K-1kD" firstAttribute="leading" secondItem="0n3-XK-Yit" secondAttribute="leading" constant="8" id="NUd-oC-mbq"/>
                         <constraint firstItem="H6i-Gc-fMo" firstAttribute="leading" secondItem="0n3-XK-Yit" secondAttribute="leading" id="Pn3-s0-dcy"/>
-                        <constraint firstItem="rm2-So-IF0" firstAttribute="top" secondItem="14P-Ww-H7V" secondAttribute="bottom" constant="-2" id="Wcy-qm-kNi"/>
                         <constraint firstAttribute="trailing" secondItem="T4c-S3-eAF" secondAttribute="trailing" constant="8" id="cTM-Ql-nUA"/>
-                        <constraint firstItem="rm2-So-IF0" firstAttribute="leading" secondItem="0n3-XK-Yit" secondAttribute="leading" constant="8" id="egb-9N-SX5"/>
-                        <constraint firstAttribute="trailing" secondItem="rm2-So-IF0" secondAttribute="trailing" constant="8" id="lpU-fH-1SW"/>
-                        <constraint firstItem="14P-Ww-H7V" firstAttribute="top" secondItem="qj7-sS-Rzf" secondAttribute="bottom" constant="10" id="mqO-I4-Hst"/>
+                        <constraint firstItem="qj7-sS-Rzf" firstAttribute="top" secondItem="0n3-XK-Yit" secondAttribute="top" constant="45" id="giw-me-5ZV"/>
+                        <constraint firstAttribute="bottom" secondItem="aIu-nh-drj" secondAttribute="bottom" constant="8" id="gpk-4n-GVi"/>
+                        <constraint firstItem="qj7-sS-Rzf" firstAttribute="leading" secondItem="0n3-XK-Yit" secondAttribute="leading" constant="100" id="ji3-gb-uMe"/>
+                        <constraint firstItem="aIu-nh-drj" firstAttribute="top" secondItem="rm2-So-IF0" secondAttribute="bottom" constant="10" id="lne-jm-GVa"/>
+                        <constraint firstAttribute="trailing" secondItem="rm2-So-IF0" secondAttribute="trailing" constant="8" id="lov-v2-joJ"/>
+                        <constraint firstAttribute="trailing" secondItem="qj7-sS-Rzf" secondAttribute="trailing" constant="99" id="opL-tr-kKx"/>
                         <constraint firstItem="Nr5-8K-1kD" firstAttribute="top" secondItem="0n3-XK-Yit" secondAttribute="top" constant="8" id="pWv-HO-xI9"/>
                         <constraint firstItem="H6i-Gc-fMo" firstAttribute="top" secondItem="0n3-XK-Yit" secondAttribute="top" id="q9O-Ew-ddS"/>
-                        <constraint firstAttribute="trailing" secondItem="14P-Ww-H7V" secondAttribute="trailing" constant="8" id="vLF-5h-tNE"/>
-                        <constraint firstItem="qj7-sS-Rzf" firstAttribute="top" secondItem="0n3-XK-Yit" secondAttribute="top" constant="45" id="wjI-XU-iWB"/>
-                        <constraint firstAttribute="trailing" secondItem="qj7-sS-Rzf" secondAttribute="trailing" constant="99" id="zrJ-oR-gYP"/>
+                        <constraint firstItem="rm2-So-IF0" firstAttribute="top" secondItem="14P-Ww-H7V" secondAttribute="bottom" constant="-2" id="wZH-Q9-qZk"/>
                     </constraints>
                 </view>
             </subviews>
@@ -123,13 +131,11 @@
                 <constraint firstItem="0n3-XK-Yit" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="KyA-I8-pJH"/>
                 <constraint firstItem="0n3-XK-Yit" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="Oyo-8i-ggg"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="0n3-XK-Yit" secondAttribute="trailing" id="TxV-sp-WFm"/>
-                <constraint firstItem="0n3-XK-Yit" firstAttribute="centerX" secondItem="vUN-kp-3ea" secondAttribute="centerX" id="WRU-wY-5kf"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="0n3-XK-Yit" secondAttribute="bottom" id="nYJ-Mh-6HG"/>
-                <constraint firstItem="0n3-XK-Yit" firstAttribute="centerY" secondItem="vUN-kp-3ea" secondAttribute="centerY" id="sjd-CK-hT0"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
-            <point key="canvasLocation" x="45.600000000000001" y="122.33883058470765"/>
+            <point key="canvasLocation" x="45.600000000000001" y="139.43028485757122"/>
         </view>
     </objects>
     <resources>

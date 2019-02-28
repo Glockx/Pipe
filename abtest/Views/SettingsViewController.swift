@@ -9,10 +9,23 @@
 import UIKit
 import Eureka
 import MessageUI
+import GoogleMobileAds
+import SwiftyStoreKit
+import SwiftKeychainWrapper
+import PMAlertController
+import Reachability
 
-class SettingsViewController: FormViewController, MFMailComposeViewControllerDelegate
+class SettingsViewController: FormViewController, MFMailComposeViewControllerDelegate,GADBannerViewDelegate
 {
+    
+    enum ObfuscatedConstants {
+        static let obfuscatedString: [UInt8] = [34, 17, 93, 37, 21, 28, 72, 23, 20, 22, 72, 125, 103, 122, 80, 94, 80, 80, 68, 114, 73, 73, 114, 92, 92, 87, 95, 78, 66, 82, 127, 107, 118, 81, 90, 84, 80, 66]
+    }
+    let reachability = Reachability()!
+    @IBOutlet var tableTopConst: NSLayoutConstraint!
+    @IBOutlet var adBanner: GADBannerView!
     @IBOutlet weak var tableBottomConstrain: NSLayoutConstraint!
+    let obfuscator = Obfuscator()
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -20,6 +33,25 @@ class SettingsViewController: FormViewController, MFMailComposeViewControllerDel
         tableView.backgroundColor = UIColor(red:1.00, green:1.00, blue:1.00, alpha:1.0)
         loadTable()
         NotificationCenter.default.addObserver(self, selector: #selector(updateSizes), name: NSNotification.Name(rawValue: "updateUsedSize"), object: nil)
+        
+        reachability.whenReachable = { reachability in
+            if reachability.connection == .wifi {
+                print("Reachable via WiFi")
+                ADTool().showBanner(adBanner: self.adBanner, rootController: self, bannerID: Obfuscator().reveal(key: ObfuscatedConstants.obfuscatedString), bannerSize: kGADAdSizeSmartBannerPortrait)
+            } else {
+                print("Reachable via Cellular")
+                ADTool().showBanner(adBanner: self.adBanner, rootController: self, bannerID: Obfuscator().reveal(key: ObfuscatedConstants.obfuscatedString), bannerSize: kGADAdSizeSmartBannerPortrait)
+            }
+        }
+        reachability.whenUnreachable = { _ in
+            print("Not reachable")
+        }
+        
+        do {
+            try reachability.startNotifier()
+        } catch {
+            print("Unable to start notifier")
+        }
     }
 
    @objc func updateSizes()
@@ -47,7 +79,37 @@ class SettingsViewController: FormViewController, MFMailComposeViewControllerDel
             })
         }
     }
+    override func viewDidAppear(_ animated: Bool)
+    {
+        super.viewDidAppear(animated)
+        if !ADTool.shareInstance.hasPurchasedNoAds
+        {
+            let row: ButtonRow = form.rowBy(tag: "buy")!
+            
+            row.cell.contentView.applyGradientToCell(colours: [UIColor(hexFromString: "#0575E6"),UIColor(hexFromString: "#2B32B2")], bounds: row.cell)
+            
+            row.reload()
+        }
+        
+    }
 
+    func adViewDidReceiveAd(_ bannerView: GADBannerView) {
+        print("Banner loaded successfully")
+        adBanner.isHidden = false
+        // Reposition the banner ad to create a slide down effect
+        let translateTransform = CGAffineTransform(translationX: 0, y: -adBanner.bounds.size.height)
+        adBanner.transform = translateTransform
+        
+        
+        UIView.animate(withDuration: 0.5)
+        {
+            self.adBanner.transform = CGAffineTransform.identity
+            self.tableTopConst.constant = 50
+            self.view.layoutIfNeeded()
+        }
+        
+    }
+    
     func loadTable()
     {
         form +++ Section("General")
@@ -56,6 +118,7 @@ class SettingsViewController: FormViewController, MFMailComposeViewControllerDel
             $0.title = "Sleep Timer"
             $0.cellStyle = .default
         }.cellUpdate { cell, row in
+            
             cell.height = ({return 50})
             cell.textLabel?.textColor = UIColor(named: "textGray")
             cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 18)
@@ -72,6 +135,7 @@ class SettingsViewController: FormViewController, MFMailComposeViewControllerDel
             cell.imageView?.image = cell.imageView?.image?.withRenderingMode(.alwaysTemplate)
             cell.imageView?.tintColor = UIColor(named: "lightBlue")
             cell.accessoryType = .disclosureIndicator
+            
         }.onCellSelection { cell, row in
             let storyBoard: UIStoryboard = UIStoryboard(name: "Main", bundle: nil)
             let newViewController = storyBoard.instantiateViewController(withIdentifier: "Timer") as! TimerViewController
@@ -116,7 +180,7 @@ class SettingsViewController: FormViewController, MFMailComposeViewControllerDel
                         for track in TrackTool.shareInstance.tracks
                         {
                             guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
-                            let fileURL = documentsDirectory.appendingPathComponent("tracks/" + track.fileName).path
+                            _ = documentsDirectory.appendingPathComponent("tracks/" + track.fileName).path
                             
 //                            if FileManager().fileExists(atPath: fileURL)
 //                            {
@@ -240,6 +304,135 @@ class SettingsViewController: FormViewController, MFMailComposeViewControllerDel
                     DispatchQueue.main.async(execute: {
                         self.present(alert, animated: true)
                     })
+            }
+            
+            +++ Section(header: "Advertisement", footer: "")
+            <<< ButtonRow("buy")
+                {
+                    SwiftyStoreKit.retrieveProductsInfo(["com.nicat.PipeMusicPlayer.removeAds"]) { result in
+                        if let product = result.retrievedProducts.first {
+                            let priceString = product.localizedPrice!
+                            print("Product: \(product.localizedDescription), price: \(priceString)")
+                        }
+                        else if let invalidProductId = result.invalidProductIDs.first {
+                            print("Invalid product identifier: \(invalidProductId)")
+                        }
+                        else {
+                            print("Error: \(result.error)")
+                        }
+                    }
+                    
+                    if !ADTool.shareInstance.hasPurchasedNoAds{
+                        $0.title = "Remove Ads (2.99$)"
+                    }else{
+                        $0.title = "Thanks For Purchase"
+                        $0.disabled = true
+                    }
+                    
+                    $0.cellStyle = .default
+        
+                }.cellUpdate{cell, row in
+                    //[UIColor(hexFromString: "#0052D4"),UIColor(hexFromString: "#65C7F7"),UIColor(hexFromString: "#9CECFB")]
+                    
+                    cell.height = ({return 70})
+                    cell.textLabel?.textColor = .white
+                    cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 24)
+                    cell.textLabel?.textAlignment = .center
+                    
+                    if ADTool.shareInstance.hasPurchasedNoAds{
+                        cell.backgroundColor = .lightGray
+                        cell.textLabel?.textColor = .white
+                    }
+                    
+                }.onCellSelection{cell,row in
+                    
+                    if !row.isDisabled {
+                    
+                        
+                        let alertVC = PMAlertController(title: "Awesome!", description: "Thank You For Purchase", image: UIImage(named: "shopping-cart"), style: .alert)
+                        alertVC.alertTitle.textColor = UIColor(named: "lightBlue")
+                        alertVC.alertTitle.font = alertVC.alertTitle.font.withSize(24)
+                        alertVC.dismissWithBackgroudTouch = true
+                    
+                        alertVC.addAction(PMAlertAction(title: "Close", style: .cancel, action: { () -> Void in
+                            print("Capture action Cancel")
+                            
+                        }))
+                    
+                        
+                        self.present(alertVC, animated: true, completion: nil)
+                        
+                        for layer in cell.contentView.layer.sublayers!{
+                            if layer.name == "gradient" {
+                                layer.removeFromSuperlayer()
+                            }
+                        }
+                        cell.backgroundColor = .lightGray
+                        cell.textLabel?.textColor = .white
+                        cell.textLabel!.text = "Thanks For Purchase"
+                        row.title = "Thanks For Purchase"
+                        print("purchase pressed")
+                        // remove FilesView Ad banner and restore tableView top constrain
+                        NotificationCenter.default.post(name: Notification.Name(rawValue: "FilesViewRemoveAds"), object: nil)
+                        
+                        //remove AlbumDetails Ad banner
+                        NotificationCenter.default.post(name: Notification.Name(rawValue: "DismissItself"), object: nil)
+                        
+                        // remove AlbumsView Ad banner and restore tableView top constrain
+                        NotificationCenter.default.post(name: Notification.Name(rawValue: "AlbumsViewRemoveAds"), object: nil)
+                        
+                        // remove PlaylistsView Ad banner and restore tableView top constrain
+                        NotificationCenter.default.post(name: Notification.Name(rawValue: "PlaylistsViewRemoveAds"), object: nil)
+                        
+                        //remove PlaylistDetails Ad banner
+                        NotificationCenter.default.post(name: Notification.Name(rawValue: "closePlaylistDetails"), object: nil)
+                        
+                        //remove MusicPlayer Ad banner
+                        NotificationCenter.default.post(name: Notification.Name(rawValue: "MusicPlayerRemoveAds"), object: nil)
+                        
+                        //remove SleepTimer Ad banner
+                        NotificationCenter.default.post(name: Notification.Name(rawValue: "SleepTimerRemoveAds"), object: nil)
+                        
+                        //remove Settings ad Banner and restore tableView top constrain
+                        if self.adBanner != nil{
+                            self.adBanner.removeFromSuperview()
+                        }
+                        self.tableTopConst.constant = 0
+                        self.view.layoutIfNeeded()
+                        
+                        ADTool.shareInstance.hasPurchasedNoAds = true
+                        KeychainWrapper.standard.set(true, forKey: "test")
+                        row.disabled = true
+                        row.evaluateDisabled()
+                        print(row.isDisabled)
+                    }
+                    
+                   
+                }
+            
+            <<< ButtonRow()
+                {
+                    $0.title = "Restore In App Purchase"
+                }.cellUpdate{cell,row in
+                    
+                    cell.height = ({return 60})
+                    cell.textLabel?.textColor = UIColor(named: "textGray")
+                    cell.textLabel?.font = UIFont.boldSystemFont(ofSize: 18)
+                    cell.textLabel?.textAlignment = .left
+                    cell.imageView?.contentMode = .scaleAspectFit
+                    cell.imageView?.image = UIImage(named: "restore")
+                    let itemSize = CGSize.init(width: 20, height: 20)
+                    UIGraphicsBeginImageContextWithOptions(itemSize, false, UIScreen.main.scale);
+                    let imageRect = CGRect.init(origin: CGPoint.zero, size: itemSize)
+                    cell.imageView?.image!.draw(in: imageRect)
+                    cell.imageView?.image! = UIGraphicsGetImageFromCurrentImageContext()!;
+                    UIGraphicsEndImageContext();
+                    cell.imageView?.image = cell.imageView?.image?.withRenderingMode(.alwaysTemplate)
+                    cell.imageView?.tintColor = UIColor(named: "lightBlue")
+                    cell.accessoryType = .disclosureIndicator
+                }.onCellSelection{cell,row in
+                    print("restore purchase")
+                    KeychainWrapper.standard.set(false, forKey: "test")
             }
             
             +++ Section(header: "Feedback", footer: "")
@@ -368,7 +561,7 @@ class SettingsViewController: FormViewController, MFMailComposeViewControllerDel
                     let documentsPathURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
                     do{
                         size =  Int64(try FileManager().allocatedSizeOfDirectory(at: documentsPathURL!))
-                        print(size)
+                        //print(size)
                     }catch{
                         print("error")
                     }
@@ -450,5 +643,27 @@ class SettingsViewController: FormViewController, MFMailComposeViewControllerDel
 
     func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
         controller.dismiss(animated: true, completion: nil)
+    }
+    
+    
+    func colorWithGradient(frame: CGRect, colors: [UIColor]) -> UIColor {
+        
+        // create the background layer that will hold the gradient
+        let backgroundGradientLayer = CAGradientLayer()
+        backgroundGradientLayer.frame = frame
+        
+        // we create an array of CG colors from out UIColor array
+        let cgColors = colors.map({$0.cgColor})
+        
+        backgroundGradientLayer.colors = cgColors
+        backgroundGradientLayer.startPoint = CGPoint(x : 0.0, y : 0.5)
+        backgroundGradientLayer.endPoint = CGPoint(x :1.0, y: 0.5)
+        
+        UIGraphicsBeginImageContext(backgroundGradientLayer.bounds.size)
+        backgroundGradientLayer.render(in: UIGraphicsGetCurrentContext()!)
+        let backgroundColorImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return UIColor(patternImage: backgroundColorImage!)
     }
 }

@@ -28,9 +28,13 @@
 		524670F91CCFA25E1087AE36 /* Pods_abtest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FCA82E8A858ACC80E2C18238 /* Pods_abtest.framework */; };
 		563E3F3C2149158600F05B16 /* MusicPlayerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 563E3F3B2149158600F05B16 /* MusicPlayerViewController.swift */; };
 		5656E6662212F8E600173693 /* TimerTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5656E6652212F8E600173693 /* TimerTool.swift */; };
+		567032EB221D634B003E1C46 /* ADTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 567032EA221D634B003E1C46 /* ADTool.swift */; };
 		56712303220B2FDF001BFC3A /* PlaylistDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56712302220B2FDF001BFC3A /* PlaylistDetailsViewController.swift */; };
 		56712305220B321D001BFC3A /* PlaylistDetailsHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 56712304220B321D001BFC3A /* PlaylistDetailsHeaderView.xib */; };
 		56712307220B325C001BFC3A /* PlaylistDetailsHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56712306220B325C001BFC3A /* PlaylistDetailsHeaderView.swift */; };
+		5685498A221C465E009332E8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 56854989221C465C009332E8 /* GoogleService-Info.plist */; };
+		568D84BE2226D79300C86F91 /* GCDWebUploaderTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 568D84BD2226D79300C86F91 /* GCDWebUploaderTool.swift */; };
+		568D84C02226E3A700C86F91 /* FolderMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 568D84BF2226E3A700C86F91 /* FolderMonitor.swift */; };
 		568DAABB220866830096D514 /* SongListForPlaylistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 568DAABA220866830096D514 /* SongListForPlaylistViewController.swift */; };
 		56959D2321FB549B0071F71B /* MiniPlayerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 56959D2221FB549B0071F71B /* MiniPlayerView.xib */; };
 		56959D2521FB54C40071F71B /* MiniPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56959D2421FB54C40071F71B /* MiniPlayerView.swift */; };
@@ -38,11 +42,15 @@
 		569B6371220062A2009063B5 /* StrechView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 569B6370220062A2009063B5 /* StrechView.xib */; };
 		569B637522006307009063B5 /* StrechView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 569B637422006307009063B5 /* StrechView.swift */; };
 		569B637722006E6A009063B5 /* 1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 569B637622006E69009063B5 /* 1.jpg */; };
+		56B5EECB222528FD009338EF /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 56B5EECA222528FD009338EF /* StoreKit.framework */; };
 		56CDE1FB219C30E400562E56 /* _free-icons_png_512_2570314.png in Resources */ = {isa = PBXBuildFile; fileRef = 56CDE1FA219C30E400562E56 /* _free-icons_png_512_2570314.png */; };
 		56D07DE82212B094008391C4 /* TimerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56D07DE72212B094008391C4 /* TimerViewController.swift */; };
 		56E50E1622071F7400C46ED9 /* Playlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E50E1522071F7400C46ED9 /* Playlist.swift */; };
 		56E50E18220724F700C46ED9 /* PlaylistTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E50E17220724F700C46ED9 /* PlaylistTool.swift */; };
 		56E50E1A2207319800C46ED9 /* PlaylistCreationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E50E192207319800C46ED9 /* PlaylistCreationViewController.swift */; };
+		56ED2961222001DC008C7F97 /* Thanks.png in Resources */ = {isa = PBXBuildFile; fileRef = 56ED2960222001DC008C7F97 /* Thanks.png */; };
+		56ED296322211218008C7F97 /* Thanks-Recovered.png in Resources */ = {isa = PBXBuildFile; fileRef = 56ED296222211218008C7F97 /* Thanks-Recovered.png */; };
+		56FF70B4221FD21C00C1C021 /* Obfuscator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56FF70B3221FD21C00C1C021 /* Obfuscator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -69,9 +77,13 @@
 		19BAC971214516C7003FC817 /* if_business_economic_finance_interprise_company_search_2570301.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = if_business_economic_finance_interprise_company_search_2570301.png; sourceTree = "<group>"; };
 		563E3F3B2149158600F05B16 /* MusicPlayerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicPlayerViewController.swift; sourceTree = "<group>"; };
 		5656E6652212F8E600173693 /* TimerTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerTool.swift; sourceTree = "<group>"; };
+		567032EA221D634B003E1C46 /* ADTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ADTool.swift; sourceTree = "<group>"; };
 		56712302220B2FDF001BFC3A /* PlaylistDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistDetailsViewController.swift; sourceTree = "<group>"; };
 		56712304220B321D001BFC3A /* PlaylistDetailsHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PlaylistDetailsHeaderView.xib; sourceTree = "<group>"; };
 		56712306220B325C001BFC3A /* PlaylistDetailsHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistDetailsHeaderView.swift; sourceTree = "<group>"; };
+		56854989221C465C009332E8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		568D84BD2226D79300C86F91 /* GCDWebUploaderTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GCDWebUploaderTool.swift; sourceTree = "<group>"; };
+		568D84BF2226E3A700C86F91 /* FolderMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderMonitor.swift; sourceTree = "<group>"; };
 		568DAABA220866830096D514 /* SongListForPlaylistViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongListForPlaylistViewController.swift; sourceTree = "<group>"; };
 		56959D2221FB549B0071F71B /* MiniPlayerView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MiniPlayerView.xib; sourceTree = "<group>"; };
 		56959D2421FB54C40071F71B /* MiniPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerView.swift; sourceTree = "<group>"; };
@@ -79,12 +91,16 @@
 		569B6370220062A2009063B5 /* StrechView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = StrechView.xib; sourceTree = "<group>"; };
 		569B637422006307009063B5 /* StrechView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrechView.swift; sourceTree = "<group>"; };
 		569B637622006E69009063B5 /* 1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 1.jpg; sourceTree = "<group>"; };
+		56B5EECA222528FD009338EF /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		56CDE1FA219C30E400562E56 /* _free-icons_png_512_2570314.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "_free-icons_png_512_2570314.png"; sourceTree = "<group>"; };
 		56D07DE72212B094008391C4 /* TimerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerViewController.swift; sourceTree = "<group>"; };
 		56DCC897220E9DCC0064BF86 /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
 		56E50E1522071F7400C46ED9 /* Playlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Playlist.swift; sourceTree = "<group>"; };
 		56E50E17220724F700C46ED9 /* PlaylistTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistTool.swift; sourceTree = "<group>"; };
 		56E50E192207319800C46ED9 /* PlaylistCreationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistCreationViewController.swift; sourceTree = "<group>"; };
+		56ED2960222001DC008C7F97 /* Thanks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Thanks.png; sourceTree = "<group>"; };
+		56ED296222211218008C7F97 /* Thanks-Recovered.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Thanks-Recovered.png"; sourceTree = "<group>"; };
+		56FF70B3221FD21C00C1C021 /* Obfuscator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Obfuscator.swift; sourceTree = "<group>"; };
 		E334CF63368A366437ABF972 /* Pods-abtest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-abtest.release.xcconfig"; path = "Pods/Target Support Files/Pods-abtest/Pods-abtest.release.xcconfig"; sourceTree = "<group>"; };
 		FCA82E8A858ACC80E2C18238 /* Pods_abtest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_abtest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -95,6 +111,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				524670F91CCFA25E1087AE36 /* Pods_abtest.framework in Frameworks */,
+				56B5EECB222528FD009338EF /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,6 +149,9 @@
 				56712304220B321D001BFC3A /* PlaylistDetailsHeaderView.xib */,
 				56959D2221FB549B0071F71B /* MiniPlayerView.xib */,
 				569B637622006E69009063B5 /* 1.jpg */,
+				56ED296222211218008C7F97 /* Thanks-Recovered.png */,
+				56ED2960222001DC008C7F97 /* Thanks.png */,
+				56854989221C465C009332E8 /* GoogleService-Info.plist */,
 				190EF3F82143D697000EC0F0 /* Info.plist */,
 				190EF3F32143D697000EC0F0 /* Assets.xcassets */,
 				56DCC897220E9DCC0064BF86 /* BridgingHeader.h */,
@@ -146,6 +166,7 @@
 				190EF40D2144367F000EC0F0 /* Extensions.swift */,
 				190EF40B21442E27000EC0F0 /* if_business_economic_finance_interprise_company_browser_2570326.png */,
 				19BAC971214516C7003FC817 /* if_business_economic_finance_interprise_company_search_2570301.png */,
+				56FF70B3221FD21C00C1C021 /* Obfuscator.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -161,6 +182,9 @@
 				56E50E1522071F7400C46ED9 /* Playlist.swift */,
 				56E50E17220724F700C46ED9 /* PlaylistTool.swift */,
 				5656E6652212F8E600173693 /* TimerTool.swift */,
+				567032EA221D634B003E1C46 /* ADTool.swift */,
+				568D84BD2226D79300C86F91 /* GCDWebUploaderTool.swift */,
+				568D84BF2226E3A700C86F91 /* FolderMonitor.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -199,6 +223,7 @@
 		5DDC64350C5A0259734676FE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				56B5EECA222528FD009338EF /* StoreKit.framework */,
 				FCA82E8A858ACC80E2C18238 /* Pods_abtest.framework */,
 			);
 			name = Frameworks;
@@ -243,6 +268,9 @@
 							com.apple.BackgroundModes = {
 								enabled = 1;
 							};
+							com.apple.InAppPurchase = {
+								enabled = 1;
+							};
 						};
 					};
 				};
@@ -278,7 +306,10 @@
 				56959D2321FB549B0071F71B /* MiniPlayerView.xib in Resources */,
 				19BAC972214516C8003FC817 /* if_business_economic_finance_interprise_company_search_2570301.png in Resources */,
 				569B637722006E6A009063B5 /* 1.jpg in Resources */,
+				5685498A221C465E009332E8 /* GoogleService-Info.plist in Resources */,
+				56ED296322211218008C7F97 /* Thanks-Recovered.png in Resources */,
 				56CDE1FB219C30E400562E56 /* _free-icons_png_512_2570314.png in Resources */,
+				56ED2961222001DC008C7F97 /* Thanks.png in Resources */,
 				190EF3F22143D692000EC0F0 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -327,32 +358,44 @@
 			files = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-abtest/Pods-abtest-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-abtest/Pods-abtest-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/BCColor/BCColor.framework",
 				"${BUILT_PRODUCTS_DIR}/Eureka/Eureka.framework",
 				"${BUILT_PRODUCTS_DIR}/GCDWebServer/GCDWebServer.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
 				"${BUILT_PRODUCTS_DIR}/MarqueeLabel/MarqueeLabel.framework",
 				"${BUILT_PRODUCTS_DIR}/NotificationBannerSwift/NotificationBannerSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/PMAlertController/PMAlertController.framework",
+				"${BUILT_PRODUCTS_DIR}/ReachabilitySwift/Reachability.framework",
 				"${BUILT_PRODUCTS_DIR}/SPPermission/SPPermission.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftKeychainWrapper/SwiftKeychainWrapper.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftyStoreKit/SwiftyStoreKit.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyUI/SwiftyUI.framework",
 				"${BUILT_PRODUCTS_DIR}/ViewAnimator/ViewAnimator.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BCColor.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Eureka.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GCDWebServer.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MarqueeLabel.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NotificationBannerSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PMAlertController.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reachability.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SPPermission.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftKeychainWrapper.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyStoreKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyUI.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ViewAnimator.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-abtest/Pods-abtest-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-abtest/Pods-abtest-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -370,9 +413,13 @@
 				563E3F3C2149158600F05B16 /* MusicPlayerViewController.swift in Sources */,
 				56712307220B325C001BFC3A /* PlaylistDetailsHeaderView.swift in Sources */,
 				56959D2521FB54C40071F71B /* MiniPlayerView.swift in Sources */,
+				567032EB221D634B003E1C46 /* ADTool.swift in Sources */,
 				190EF40E2144367F000EC0F0 /* Extensions.swift in Sources */,
 				190EF3ED2143D692000EC0F0 /* AppDelegate.swift in Sources */,
+				56FF70B4221FD21C00C1C021 /* Obfuscator.swift in Sources */,
+				568D84C02226E3A700C86F91 /* FolderMonitor.swift in Sources */,
 				19BAC96C2144D84B003FC817 /* FilesViewController .swift in Sources */,
+				568D84BE2226D79300C86F91 /* GCDWebUploaderTool.swift in Sources */,
 				190B5FC621467A7E00B3B7C9 /* TimeFormat.swift in Sources */,
 				568DAABB220866830096D514 /* SongListForPlaylistViewController.swift in Sources */,
 				19BAC96A2144D84B003FC817 /* PlaylistViewController.swift in Sources */,
@@ -535,13 +582,13 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 9YJEAPX976;
 				INFOPLIST_FILE = abtest/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -Xfrontend -debug-time-function-bodies";
-				PRODUCT_BUNDLE_IDENTIFIER = com.nicat.Player;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nicat.PipeMusicPlayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -560,13 +607,13 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 9YJEAPX976;
 				INFOPLIST_FILE = abtest/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" -Xfrontend -debug-time-function-bodies";
-				PRODUCT_BUNDLE_IDENTIFIER = com.nicat.Player;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nicat.PipeMusicPlayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = abtest/BridgingHeader.h;

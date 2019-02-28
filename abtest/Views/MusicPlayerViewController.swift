@@ -10,10 +10,21 @@ import UIKit
 import MarqueeLabel
 import SnapKit
 import BCColor
+import GoogleMobileAds
+import Reachability
 //TODO: Make Artist and Track Label MarqueeLabel
 
-class MusicPlayerViewController: UIViewController {
+class MusicPlayerViewController: UIViewController,GADInterstitialDelegate {
 
+    enum ObfuscatedConstants {
+        static let obfuscatedString: [UInt8] = [34, 17, 93, 37, 21, 28, 72, 23, 20, 22, 72, 125, 103, 122, 80, 94, 80, 80, 68, 114, 73, 73, 114, 92, 92, 87, 95, 78, 71, 92, 118, 98, 125, 82, 83, 93, 85, 65]
+
+         static let obfuscatedString2: [UInt8] = [34, 17, 93, 37, 21, 28, 72, 23, 20, 22, 72, 125, 106, 123, 82, 88, 80, 85, 68, 120, 73, 73, 112, 87, 89, 81, 83, 78, 64, 81, 127, 98, 123, 84, 82, 92, 82, 68]
+    }
+    let reachability = Reachability()!
+    var firsTime = true
+    var interstitial: GADInterstitial!
+    @IBOutlet var bannerView: GADBannerView!
     @IBOutlet weak var repeatButton: UIButton!
     @IBOutlet weak var resetButton: UIButton!
     @IBOutlet weak var colorView: UIView!
@@ -33,11 +44,14 @@ class MusicPlayerViewController: UIViewController {
     var popupTimer = Timer()
     var trackList = [Track]()
     static var shared = MusicPlayerViewController()
+    let obfuscator = Obfuscator()
     
     //TODO: Implement edit music metadata
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        
+        GADMobileAds.sharedInstance().applicationMuted = true
         
         UpdateGeneralViewWithSongDetails()
         
@@ -77,13 +91,68 @@ class MusicPlayerViewController: UIViewController {
         // set observer for UIApplication.willEnterForegroundNotification
         NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(enteredBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
-
+        NotificationCenter.default.addObserver(self, selector: #selector(removeAds), name: NSNotification.Name(rawValue: "MusicPlayerRemoveAds"), object: nil)
+        
+        
+        reachability.whenReachable = { reachability in
+            if reachability.connection == .wifi {
+                print("Reachable via WiFi")
+                ADTool.shareInstance.showBanner(adBanner: self.bannerView, rootController: self, bannerID: self.obfuscator.reveal(key: ObfuscatedConstants.obfuscatedString), bannerSize: kGADAdSizeSmartBannerPortrait)
+                if !ADTool.shareInstance.hasPurchasedNoAds
+                {
+                    self.interstitial = self.createAndLoadInterstitial()
+                }
+            } else {
+                print("Reachable via Cellular")
+                ADTool.shareInstance.showBanner(adBanner: self.bannerView, rootController: self, bannerID: self.obfuscator.reveal(key: ObfuscatedConstants.obfuscatedString), bannerSize: kGADAdSizeSmartBannerPortrait)
+                if !ADTool.shareInstance.hasPurchasedNoAds
+                {
+                    self.interstitial = self.createAndLoadInterstitial()
+                }
+            }
+        }
+        reachability.whenUnreachable = { _ in
+            print("Not reachable")
+        }
+        
+        do {
+            try reachability.startNotifier()
+        } catch {
+            print("Unable to start notifier")
+        }
+        
+        
+        
+        
+ 
     }
     
-//    override var preferredStatusBarStyle : UIStatusBarStyle {
-//        return .lightContent
-//    }
-//
+    @objc func removeAds(){
+        if bannerView != nil{
+            bannerView.removeFromSuperview()
+        }
+    }
+    
+    func createAndLoadInterstitial() -> GADInterstitial {
+        let interstitial = GADInterstitial(adUnitID: "ca-app-pub-3940256099942544/5135589807")
+        interstitial.delegate = self
+        interstitial.load(GADRequest())
+        return interstitial
+    }
+    
+    func interstitialDidDismissScreen(_ ad: GADInterstitial)
+    {
+        if !ADTool.shareInstance.hasPurchasedNoAds
+        {
+            
+            interstitial = createAndLoadInterstitial()
+        }
+    }
+    
+    /// Tells the delegate an ad request failed.
+    func interstitial(_ ad: GADInterstitial, didFailToReceiveAdWithError error: GADRequestError) {
+        print("interstitial:didFailToReceiveAdWithError: \(error.localizedDescription)")
+    }
     
     @objc func enteredBackground()
     {
@@ -105,6 +174,29 @@ class MusicPlayerViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(true)
         updateView()
+        
+        if !ADTool.shareInstance.hasPurchasedNoAds
+        {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute:
+                {
+                    if self.interstitial != nil{
+                        if self.interstitial.isReady && self.firsTime{
+                            print("showing inter")
+                            
+                            self.interstitial.present(fromRootViewController: self)
+                            self.firsTime = false
+                        }
+                    }
+            })
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if interstitial != nil{
+            interstitial = nil
+        }
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -156,12 +248,15 @@ class MusicPlayerViewController: UIViewController {
         }else{
             playButton.setBackgroundImage(UIImage(named: "play-button"), for: .normal)
         }
-         updateView()
+        setupTrackDetails()
+        updateView()
     }
     
     @objc func DownSwipe(){
         print("down")
         dismiss(animated: true, completion: nil)
+        UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.default, animated: false)
+        UIApplication.shared.statusBarView?.backgroundColor = .white
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: "addobser"), object: nil)
         NotificationCenter.default.removeObserver(self)
     }
@@ -307,7 +402,8 @@ class MusicPlayerViewController: UIViewController {
 
     
     func updateView() {
-
+        
+        
         if let colors = musicArtwork.image?.getColors() {
             UIView.animate(withDuration: 0.5, animations: {
                
@@ -379,11 +475,12 @@ class MusicPlayerViewController: UIViewController {
     
     @IBAction func closeView(_ sender: Any)
     {
-       dismiss(animated: true, completion: nil)
-        UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.default, animated: true)
+        UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.default, animated: false)
+        UIApplication.shared.statusBarView?.backgroundColor = .white
         
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: "addobser"), object: nil)
         NotificationCenter.default.removeObserver(self)
+        dismiss(animated: true, completion: nil)
     }
 
     func setupTrackDetails() {
@@ -393,8 +490,8 @@ class MusicPlayerViewController: UIViewController {
             return print("no song")
         }
 
-        trackTitle.text = track.trackModel?.title
-        artistLabel.text = track.trackModel?.artist
+        trackTitle.text = track.trackModel?.artist
+        artistLabel.text = track.trackModel?.title
         fileName.text = track.trackModel?.fileName
         
         

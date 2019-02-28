@@ -11,16 +11,27 @@ import AVFoundation
 import MarqueeLabel
 import ViewAnimator
 import SPPermission
+import GoogleMobileAds
+import Reachability
 
-class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDataSource {
+class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDataSource,UISearchBarDelegate,GADBannerViewDelegate {
 
-
+    enum ObfuscatedConstants {
+        static let obfuscatedString: [UInt8] = [34, 17, 93, 37, 21, 28, 72, 23, 20, 22, 72, 125, 103, 122, 80, 94, 80, 80, 68, 114, 73, 73, 114, 92, 92, 87, 95, 78, 77, 82, 118, 107, 127, 85, 90, 86, 82, 64]
+    }
     
+    let reachability = Reachability()!
     @IBOutlet weak var tablePlaceholder: UIView!
     @IBOutlet weak var placeholderFileImage: UIImageView!
     @IBOutlet weak var tableViewBottom: NSLayoutConstraint!
     @IBOutlet weak var tableView: UITableView!
     
+    @IBOutlet var adBanner: GADBannerView!
+    @IBOutlet var tableTopConst: NSLayoutConstraint!
+    var adBannerView: GADBannerView?
+    var searchTrack = [Track]()
+    var searching = false
+    let searchBar = UISearchBar()
     var heightAtIndexPath = NSMutableDictionary()
     var timer = Timer()
     var observerAdded = false
@@ -29,10 +40,15 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
     var tracks = [Track]()
     var documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
     let fileManager = FileManager.default
+    let obfuscator = Obfuscator()
     
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        
+        self.tabBarController?.tabBar.barTintColor = .white
+        self.tabBarController?.tabBar.isTranslucent = false
+        
         
         placeholderFileImage.image = placeholderFileImage.image?.withRenderingMode(.alwaysTemplate)
         placeholderFileImage.tintColor = UIColor.lightGray
@@ -42,6 +58,26 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
      
         self.loadTracks()
 
+        
+        reachability.whenReachable = { reachability in
+            if reachability.connection == .wifi {
+                print("Reachable via WiFi")
+                ADTool().showBanner(adBanner: self.adBanner, rootController: self, bannerID: Obfuscator().reveal(key: ObfuscatedConstants.obfuscatedString), bannerSize: kGADAdSizeSmartBannerPortrait)
+            } else {
+                print("Reachable via Cellular")
+                ADTool().showBanner(adBanner: self.adBanner, rootController: self, bannerID: Obfuscator().reveal(key: ObfuscatedConstants.obfuscatedString), bannerSize: kGADAdSizeSmartBannerPortrait)
+            }
+        }
+        reachability.whenUnreachable = { _ in
+            print("Not reachable")
+        }
+        
+        do {
+            try reachability.startNotifier()
+        } catch {
+            print("Unable to start notifier")
+        }
+        
         if #available(iOS 11, *) {
             UINavigationBar.appearance().largeTitleTextAttributes = [
                 NSAttributedString.Key.foregroundColor: UIColor.black
@@ -50,16 +86,65 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
             self.navigationController?.navigationItem.largeTitleDisplayMode = .always
         }
         
+        self.searchBar.delegate = self
+        
+        searchBar.placeholder = "Search"
+        searchBar.frame = CGRect(x: 0, y: 0, width: view.bounds.size.width, height: 64)
+        searchBar.barStyle = .default
+        searchBar.searchBarStyle = .minimal
+        searchBar.isTranslucent = false
+        searchBar.barTintColor = .white
+        let cancelButtonAttributes = [NSAttributedStringKey.foregroundColor: UIColor.lightGray]
+        UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes(cancelButtonAttributes, for: .normal)
+        tableView.tableHeaderView = searchBar
+        
+        if tableView.numberOfSections > 0
+        {
+            tableView.scrollToRow(at: NSIndexPath(row: 0, section: 0) as IndexPath, at: UITableViewScrollPosition.top, animated: false)
+        }
+        
+        
         NotificationCenter.default.addObserver(self, selector: #selector(loadTracks), name: Notification.Name(rawValue: "loadtracks"), object: nil)
         
          NotificationCenter.default.addObserver(self, selector: #selector(showMusicPlayer), name: Notification.Name(rawValue: "showMusicPlayer"), object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(playnext), name: NSNotification.Name(rawValue: trackFinish), object: nil)
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(disableAds), name: NSNotification.Name(rawValue: "FilesViewRemoveAds"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(addObser), name: NSNotification.Name(rawValue: "addobser"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(justEnteredToApp), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
+        
     }
 
+    @objc func disableAds(){
+        if adBanner != nil{
+            adBanner.removeFromSuperview()
+        }
+        self.tableTopConst.constant = 0
+        self.view.layoutIfNeeded()
+    }
+    
+    func adViewDidReceiveAd(_ bannerView: GADBannerView) {
+        print("Banner loaded successfully")
+        adBanner.isHidden = false
+        // Reposition the banner ad to create a slide down effect
+        let translateTransform = CGAffineTransform(translationX: 0, y: -adBanner.bounds.size.height)
+        adBanner.transform = translateTransform
+
+        
+        UIView.animate(withDuration: 0.5)
+        {
+            self.adBanner.transform = CGAffineTransform.identity
+            self.tableTopConst.constant = 50
+            self.view.layoutIfNeeded()
+        }
+        
+    }
+    
+    func adView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: GADRequestError) {
+        print("Fail to receive ads")
+        print(error)
+    }
+    
     @objc func addObser()
     {
         NotificationCenter.default.addObserver(self, selector: #selector(playnext), name: NSNotification.Name(rawValue: trackFinish), object: nil)
@@ -69,9 +154,11 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
     {
         super.viewDidAppear(true)
         if UserDefaults.isFirstLaunch(){
+            //,.contacts,.calendar,.microphone,.motion
             SPPermission.Dialog.request(with: [.camera, .photoLibrary, .mediaLibrary], on: self)
         }
     }
+    
     
     override func viewWillAppear(_ animated: Bool)
     {
@@ -93,10 +180,11 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
         }
         NotificationCenter.default.post(name: Notification.Name(rawValue: "updatePlayer"), object: nil)
         NotificationCenter.default.post(name: Notification.Name(rawValue: "updateIcon"), object: nil)
-        UIApplication.shared.statusBarView?.backgroundColor = .white
+        //UIApplication.shared.statusBarView?.backgroundColor = .white
         tracks.sort { $0.fileName < $1.fileName}
         reloadPlaceHolder()
     }
+    
     
     @objc func justEnteredToApp()
     {
@@ -139,8 +227,13 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
         return 1
     }
 
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return tracks.count
+    func numberOfSections(in tableView: UITableView) -> Int
+    {
+        if searching{
+            return searchTrack.count
+        }else{
+            return tracks.count
+        }
     }
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -193,28 +286,53 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
     {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SongCell") as! SongCell
         let track = tracks[indexPath.section]
-        DispatchQueue.main.async
+        
+        if searching
         {
-            guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
-            let fileURL = documentsDirectory.appendingPathComponent("artwork/" + track.fileName)
-
-            if FileManager.default.fileExists(atPath: fileURL.path)
-            {
-                let image = loadImageFromDiskWith(fileName: track.fileName)
-//                let imagesize = image?.size
-//                UIGraphicsBeginImageContext(imagesize!)
-//                image?.draw(in: CGRect(x: 0, y: 0, width: imagesize?.width ?? 0.0, height: imagesize?.height ?? 0.0))
-//                image = UIGraphicsGetImageFromCurrentImageContext()
-//                UIGraphicsEndImageContext();
-                cell.cellimageView.image = image
+            let searchsongs = searchTrack[indexPath.section]
+            DispatchQueue.main.async
+                {
+                    guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+                    let fileURL = documentsDirectory.appendingPathComponent("artwork/" + searchsongs.fileName)
+                    if FileManager.default.fileExists(atPath: fileURL.path)
+                    {
+                        let image = loadImageFromDiskWith(fileName: searchsongs.fileName)
+                        
+                        cell.cellimageView.image = image
+                    }
+                    else
+                    {
+                        cell.cellimageView.image = UIImage(named: "artwork")
+                    }
+                    cell.trackTitle.text = searchsongs.fileName
             }
-            else{
-                cell.cellimageView.image = UIImage(named: "artwork")
-            }
-            
-            
         }
-        cell.trackTitle.text = track.fileName
+        else
+        {
+            DispatchQueue.main.async
+                {
+                    
+                    guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+                    let fileURL = documentsDirectory.appendingPathComponent("artwork/" + track.fileName)
+                    
+                    if FileManager.default.fileExists(atPath: fileURL.path)
+                    {
+                        let image = loadImageFromDiskWith(fileName: track.fileName)
+                        //                let imagesize = image?.size
+                        //                UIGraphicsBeginImageContext(imagesize!)
+                        //                image?.draw(in: CGRect(x: 0, y: 0, width: imagesize?.width ?? 0.0, height: imagesize?.height ?? 0.0))
+                        //                image = UIGraphicsGetImageFromCurrentImageContext()
+                        //                UIGraphicsEndImageContext();
+                        cell.cellimageView.image = image
+                    }
+                    else{
+                        cell.cellimageView.image = UIImage(named: "artwork")
+                    }
+            }
+            cell.trackTitle.text = track.fileName
+        }
+        
+
         return cell
     }
 
@@ -406,7 +524,12 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
         })
         editAction.backgroundColor = UIColor(red:0.00, green:0.48, blue:1.00, alpha:1.0)
         
-        return [deleteAction,editAction]
+        if searching == false{
+            return [deleteAction,editAction]
+        }else{
+            return []
+        }
+        
     }
     
     
@@ -479,6 +602,28 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
         catch { print("Not Deleted") }
     }
     
+    
+    
+    // <================================== searchBar Configuration Beginning ================================>
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)
+    {
+        searchTrack = tracks.filter({$0.fileName.lowercased().contains(searchText.lowercased())})
+        searchBar.showsCancelButton = true
+        searching = true
+        tableView.reloadData()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searching = false
+        searchBar.endEditing(true)
+        searchBar.text = ""
+        searchBar.showsCancelButton = false
+        tableView.reloadData()
+    }
+    
+    // <================================== searchBar Configuration End ================================>
+    
+    
 }
 
 
@@ -493,35 +638,68 @@ extension FilesViewController {
         
         tableView.deselectRow(at: indexPath, animated: true)
     
-        
-        TrackTool.shareInstance.playlist.removeAll()
-        TrackTool.shareInstance.playlist = tracks
-        let track = tracks[indexPath.section]
-        
-        TrackTool.shareInstance.playTrack(track: track)
-        print("tableIndexPath: ", indexPath.section)
-        let appDelegate: AppDelegate? = UIApplication.shared.delegate as? AppDelegate
-        appDelegate?.tryToDrawOnTheWindow()
-        
-        if (TrackTool.shareInstance.trackPlayer?.isPlaying)! && TrackTool.shareInstance.isHidden
-        {
-            NotificationCenter.default.post(name: Notification.Name(rawValue: "showPlayer"), object: nil)
-        }
-        
-        if firstTime
-        {
-            UIView.animate(withDuration: 0.3, animations:
-                {
-                self.tableViewBottom.constant = -67
-                self.view.layoutIfNeeded()
-            })
+        if searching == false{
+            TrackTool.shareInstance.playlist.removeAll()
+            TrackTool.shareInstance.playlist = tracks
+            let track = tracks[indexPath.section]
             
-            self.firstTime = false
-            NotificationCenter.default.post(name: Notification.Name(rawValue: "showPlayer"), object: nil)
+            TrackTool.shareInstance.playTrack(track: track)
+            print("tableIndexPath: ", indexPath.section)
+            let appDelegate: AppDelegate? = UIApplication.shared.delegate as? AppDelegate
+            appDelegate?.tryToDrawOnTheWindow()
+            
+            if (TrackTool.shareInstance.trackPlayer?.isPlaying)! && TrackTool.shareInstance.isHidden
+            {
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "showPlayer"), object: nil)
+            }
+            
+            if firstTime
+            {
+                UIView.animate(withDuration: 0.3, animations:
+                    {
+                        self.tableViewBottom.constant = -67
+                        self.view.layoutIfNeeded()
+                })
+                
+                self.firstTime = false
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "showPlayer"), object: nil)
+            }
+            TrackTool.shareInstance.isHidden = false
+            NotificationCenter.default.post(name: Notification.Name(rawValue: "updatePlayer"), object: nil)
+            NotificationCenter.default.post(name: Notification.Name(rawValue: "updateIcon"), object: nil)
         }
-        TrackTool.shareInstance.isHidden = false
-        NotificationCenter.default.post(name: Notification.Name(rawValue: "updatePlayer"), object: nil)
-        NotificationCenter.default.post(name: Notification.Name(rawValue: "updateIcon"), object: nil)
+        else
+        {
+            TrackTool.shareInstance.playlist.removeAll()
+            TrackTool.shareInstance.playlist = tracks
+            let track = searchTrack[indexPath.section]
+            
+            TrackTool.shareInstance.playTrack(track: track)
+            print("tableIndexPath: ", indexPath.section)
+            let appDelegate: AppDelegate? = UIApplication.shared.delegate as? AppDelegate
+            appDelegate?.tryToDrawOnTheWindow()
+            
+            if (TrackTool.shareInstance.trackPlayer?.isPlaying)! && TrackTool.shareInstance.isHidden
+            {
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "showPlayer"), object: nil)
+            }
+            
+            if firstTime
+            {
+                UIView.animate(withDuration: 0.3, animations:
+                    {
+                        self.tableViewBottom.constant = -67
+                        self.view.layoutIfNeeded()
+                })
+                
+                self.firstTime = false
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "showPlayer"), object: nil)
+            }
+            TrackTool.shareInstance.isHidden = false
+            NotificationCenter.default.post(name: Notification.Name(rawValue: "updatePlayer"), object: nil)
+            NotificationCenter.default.post(name: Notification.Name(rawValue: "updateIcon"), object: nil)
+        }
+        
         
     }
     
@@ -606,21 +784,12 @@ class SongCell: UITableViewCell
     func configureTrackCell(track: Track) {
 
         
-        trackTitle.text = track.fileName
-        cellimageView.image = UIImage(data: track.artwork!)
+       // trackTitle.text = track.fileName
+       // cellimageView.image = UIImage(data: track.artwork!)
         
-        /*
-         let urls = fileManager.urls(for: .documentDirectory, in: .userDomainMask)
-         if let documentDirectoryURL: NSURL = urls.first as NSURL? {
+        
          
-         let playYoda = documentDirectoryURL.appendingPathComponent(track.fileName + ".mp3")
-         let asset = AVURLAsset(url: playYoda!)
-         let audioDuration = asset.duration
-         let audioDurationSeconds = CMTimeGetSeconds(audioDuration)
-         let total = getFormatTime(timerInval: audioDurationSeconds)
-         time.text = total
-         }
-         */
+        
     }
 
     func duration(for resource: String) -> Double {

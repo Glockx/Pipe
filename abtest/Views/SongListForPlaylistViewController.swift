@@ -208,8 +208,11 @@ class SongListForPlaylistViewController: UIViewController,UITableViewDataSource,
         searchBar.text = ""
         tableView.reloadData()
     }
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        searchBar.showsCancelButton = true
+    }
     // <================================== searchBar Configuration End ================================>
-    
+
 }
 
 

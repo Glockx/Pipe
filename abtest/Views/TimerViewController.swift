@@ -7,8 +7,9 @@
 //
 
 import UIKit
-
-class TimerViewController: UIViewController {
+import GoogleMobileAds
+import Reachability
+class TimerViewController: UIViewController,GADBannerViewDelegate {
 
     @IBOutlet weak var pauseButton: UIButton!
     @IBOutlet weak var startButton: UIButton!
@@ -16,14 +17,61 @@ class TimerViewController: UIViewController {
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var tabBar: UINavigationBar!
     @IBOutlet weak var timer: UIDatePicker!
-
+    @IBOutlet var adBanner: GADBannerView!
+    let reachability = Reachability()!
     
 
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        reachability.whenReachable = { reachability in
+            if reachability.connection == .wifi {
+                print("Reachable via WiFi")
+                ADTool.shareInstance.showBanner(adBanner: self.adBanner, rootController: self, bannerID: "ca-app-pub-3452453039969028/3198040414", bannerSize: kGADAdSizeSmartBannerPortrait)
+            } else {
+                print("Reachable via Cellular")
+                ADTool.shareInstance.showBanner(adBanner: self.adBanner, rootController: self, bannerID: "ca-app-pub-3452453039969028/3198040414", bannerSize: kGADAdSizeSmartBannerPortrait)
+            }
+        }
+        reachability.whenUnreachable = { _ in
+            print("Not reachable")
+        }
+        
+        do {
+            try reachability.startNotifier()
+        } catch {
+            print("Unable to start notifier")
+        }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(removeAds), name: NSNotification.Name(rawValue: "SleepTimerRemoveAds"), object: nil)
+    }
+    
+    func adViewDidReceiveAd(_ bannerView: GADBannerView) {
+        print("Banner loaded successfully")
+        adBanner.isHidden = false
+        // Reposition the banner ad to create a slide down effect
+        let translateTransform = CGAffineTransform(translationX: 0, y: -adBanner.bounds.size.height)
+        adBanner.transform = translateTransform
+        
+        
+        UIView.animate(withDuration: 0.5)
+        {
+            self.adBanner.transform = CGAffineTransform.identity
+        }
         
     }
+    
+    @objc func removeAds(){
+        if adBanner != nil{
+            adBanner.removeFromSuperview()
+        }
+    }
+    
+    func adView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: GADRequestError) {
+        print("Fail to receive ads")
+        print(error)
+    }
+    
     override func viewWillAppear(_ animated: Bool)
     {
         super.viewWillAppear(true)

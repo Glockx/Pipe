@@ -8,12 +8,12 @@
 
 import UIKit
 import BCColor
-
+import Reachability
 class PlaylistDetailsViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
 {
 
     @IBOutlet weak var tableView: UITableView!
-    
+    let reachability = Reachability()!
     @IBOutlet weak var tableBottomConst: NSLayoutConstraint!
     var HeaderView: PlaylistDetailsHeaderView?
     var passedPlaylistName = ""
@@ -33,7 +33,13 @@ class PlaylistDetailsViewController: UIViewController,UITableViewDelegate,UITabl
         let size = CGSize(width: 176, height: 166)
         //Adding Playlist Detail Header view to header view of tableView
         HeaderView = PlaylistDetailsHeaderView()
-        HeaderView?.frame = CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 300)
+        
+        if !ADTool.shareInstance.hasPurchasedNoAds{
+            HeaderView?.frame = CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 340)
+        }else{
+            HeaderView?.frame = CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 300)
+        }
+        
         tableView.estimatedRowHeight = UITableViewAutomaticDimension
         tableView.tableHeaderView = HeaderView
         tableView.addSubview(HeaderView!)
@@ -95,6 +101,31 @@ class PlaylistDetailsViewController: UIViewController,UITableViewDelegate,UITabl
         tableView.reloadData()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        reachability.whenReachable = { reachability in
+            if reachability.connection == .wifi {
+                print("Reachable via WiFi")
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "PlaylistDetailsstartAds"), object: nil)
+            } else {
+                print("Reachable via Cellular")
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "PlaylistDetailsstartAds"), object: nil)
+            }
+        }
+        reachability.whenUnreachable = { _ in
+            print("Not reachable")
+        }
+        
+        do {
+            try reachability.startNotifier()
+        } catch {
+            print("Unable to start notifier")
+        }
+        
+        
+        
+    }
     
     @objc func updateRemovedTracks()
     {
@@ -209,10 +240,13 @@ class PlaylistDetailsViewController: UIViewController,UITableViewDelegate,UITabl
         return 65
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
+    {
         let cell = tableView.dequeueReusableCell(withIdentifier: "PlaylistDetailsCell") as! PlaylistDetailsCell
         
         let grabbedPlaylist = passedPlaylist?.tracks[indexPath.section]
+        
+        cell.songDuration.text = calculateSongDuration(track: grabbedPlaylist!)
         
         if !(grabbedPlaylist?.album == "Unknown")
         {
@@ -330,6 +364,7 @@ class PlaylistDetailsCell: UITableViewCell
     @IBOutlet weak var artwork: UIImageView!
     @IBOutlet weak var TrackName: UILabel!
     @IBOutlet weak var artistName: UILabel!
+    @IBOutlet weak var songDuration: UILabel!
     
     override func prepareForReuse()
     {

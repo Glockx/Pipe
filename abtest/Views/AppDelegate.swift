@@ -9,22 +9,59 @@
 import UIKit
 import MarqueeLabel
 import SnapKit
+import GoogleMobileAds
+import Firebase
+import SwiftyStoreKit
+import StoreKit
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
+    enum ObfuscatedConstants {
+        static let obfuscatedString: [UInt8] = [34, 17, 93, 37, 21, 28, 72, 23, 20, 22, 72, 125, 103, 122, 80, 94, 80, 80, 68, 114, 73, 73, 114, 92, 92, 87, 95, 31, 65, 86, 126, 97, 127, 81, 90, 86, 90, 69]
+    }
+    
     var window: UIWindow?
     var currentPlaying: MiniPlayerView!
     var hasadded = false
-
+    let obfuscator = Obfuscator()
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        
+        //Creating tracks and artwork folder
         let file = URL.createFolder(folderName: "tracks")
         let folder = URL.createFolder(folderName: "artwork")
+        
         //UserDefaults.standard.removeObject(forKey: "hasBeenLaunchedBeforeFlag")
+        
+        //Configure Admob
+        GADMobileAds.configure(withApplicationID: Obfuscator().reveal(key: ObfuscatedConstants.obfuscatedString))
+        
+        //Configure Firebase
+        FirebaseApp.configure()
+        
+        //Make application status bar white
         UIApplication.shared.statusBarView?.backgroundColor = UIColor.white
+        
+        //Load tracks and playlists from documents
         TrackTool.shareInstance.tracks = loadSongs() ?? TrackTool.shareInstance.tracks
         PlaylistTool.shareInstance.playlists = loadPlaylists() ?? PlaylistTool.shareInstance.playlists
+        
+        // see notes below for the meaning of Atomic / Non-Atomic
+        SwiftyStoreKit.completeTransactions(atomically: true) { purchases in
+            for purchase in purchases {
+                switch purchase.transaction.transactionState {
+                case .purchased, .restored:
+                    if purchase.needsFinishTransaction {
+                        // Deliver content from server, then:
+                        SwiftyStoreKit.finishTransaction(purchase.transaction)
+                    }
+                // Unlock content
+                case .failed, .purchasing, .deferred:
+                    break // do nothing
+                }
+            }
+        }
+        
         //dump(PlaylistTool.shareInstance.playlists)
         #if DEBUG
         Bundle(path: "/Applications/InjectionIII.app/Contents/Resources/iOSInjection10.bundle")?.load()

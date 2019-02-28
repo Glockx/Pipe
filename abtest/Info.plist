@@ -19,24 +19,35 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
-	<string>882</string>
+	<string>1339</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
+		<key>NSAllowsArbitraryLoadsInWebContent</key>
+		<true/>
 	</dict>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>Need Access For Playing Music</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>External libraries or SDKs required this permission, Pipe is not using any resource related to Calendar</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Need Access for Taking Photo</string>
+	<key>NSContactsUsageDescription</key>
+	<string>External libraries or SDKs required this permission, Pipe is not using any resource related to Contacts</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>External libraries or SDKs required this permission, Pipe is not using any resource related to Microphone</string>
+	<key>NSMotionUsageDescription</key>
+	<string>External libraries or SDKs required this permission, Pipe is not using any resource related to Motion</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Need Access for Choosing Images from Photo Library</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>External libraries or SDKs required this permission, Pipe is not using any resource related to Speech Recognition</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
-		<string>fetch</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

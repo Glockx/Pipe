@@ -8,12 +8,15 @@
 
 import UIKit
 import BCColor
-
-class AlbumDetailsViewController: UIViewController
+import GoogleMobileAds
+import Reachability
+class AlbumDetailsViewController: UIViewController,GADBannerViewDelegate
 {
     let screen = UIScreen.main.bounds
     var strechView: StrechView?
-    
+    let reachability = Reachability()!
+    @IBOutlet var tableTopConst: NSLayoutConstraint!
+    @IBOutlet var adBanner: GADBannerView!
     @IBOutlet weak var tableBottomConstrain: NSLayoutConstraint!
     var passedAlbumName = ""
     var passedArtistName = ""
@@ -38,7 +41,13 @@ class AlbumDetailsViewController: UIViewController
         
         //setup header album info view
         strechView = StrechView()
-        strechView?.frame = CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 200)
+        
+        if !ADTool.shareInstance.hasPurchasedNoAds{
+             strechView?.frame = CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 240)
+        }else{
+             strechView?.frame = CGRect(x: 0, y: 0, width: tableView.bounds.width, height: 200)
+        }
+       
         tableView.estimatedRowHeight = UITableViewAutomaticDimension
         tableView.tableHeaderView = strechView
         tableView.addSubview(strechView!)
@@ -86,7 +95,39 @@ class AlbumDetailsViewController: UIViewController
                     self.view.layoutSubviews()
             })
         }
+        
+//        adBanner.adSize = kGADAdSizeSmartBannerPortrait
+//        adBanner.adUnitID = "ca-app-pub-3452453039969028/3119554337"
+//        adBanner.delegate = self
+//        adBanner.rootViewController = self
+//        adBanner.load(GADRequest())
+        
+       
+        
     }
+    
+    func adViewDidReceiveAd(_ bannerView: GADBannerView) {
+        print("Banner loaded successfully")
+        adBanner.isHidden = false
+        // Reposition the banner ad to create a slide down effect
+        let translateTransform = CGAffineTransform(translationX: 0, y: -adBanner.bounds.size.height)
+        adBanner.transform = translateTransform
+        
+        
+        UIView.animate(withDuration: 0.5)
+        {
+            self.adBanner.transform = CGAffineTransform.identity
+            self.tableTopConst.constant = 50
+            self.view.layoutIfNeeded()
+        }
+        
+    }
+    
+    func adView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: GADRequestError) {
+        print("Fail to receive ads")
+        print(error)
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -131,6 +172,30 @@ class AlbumDetailsViewController: UIViewController
        
     }
     
+    override func viewDidAppear(_ animated: Bool)
+    {
+        super.viewDidAppear(animated)
+        
+        reachability.whenReachable = { reachability in
+            if reachability.connection == .wifi {
+                print("Reachable via WiFi")
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "AlbumDetailsstartAds"), object: nil)
+            } else {
+                print("Reachable via Cellular")
+                NotificationCenter.default.post(name: Notification.Name(rawValue: "AlbumDetailsstartAds"), object: nil)
+            }
+        }
+        reachability.whenUnreachable = { _ in
+            print("Not reachable")
+        }
+        
+        do {
+            try reachability.startNotifier()
+        } catch {
+            print("Unable to start notifier")
+        } 
+    }
+    
     //                             <===================== TableView Configuration Section Begining =====================>
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
@@ -164,6 +229,10 @@ class AlbumDetailsViewController: UIViewController
         let cell = tableView.dequeueReusableCell(withIdentifier: "albumSongs", for: indexPath) as! albumSongsCell
         let grabedAlbumtracks = AlbumTracks[indexPath.section]
         
+        
+        cell.songDuration.text = calculateSongDuration(track: grabedAlbumtracks)
+        
+        
         // Checking if album name is equal to Unknown, if it dosen't set tracks names related to track names in Album, else, file name in album.
         if !(passedAlbumName == "Unknown")
         {
@@ -183,7 +252,9 @@ class AlbumDetailsViewController: UIViewController
             let indexOfTrackArtist = grabedAlbumtracks.artist
             cell.artistName.text = indexOfTrackArtist
             return cell
-        }else{
+        }
+        else
+        {
             // <===================== Getting Track Number of All Album Tracks =====================>
             let indexOfTracks = AlbumTracks.firstIndex(of: grabedAlbumtracks)! + 1
             // Format Track Numbers With leading "0" such as 01, 02, 03  .....
@@ -237,8 +308,7 @@ class albumSongsCell: UITableViewCell
     @IBOutlet weak var songCount: UILabel!
     @IBOutlet weak var songName: UILabel!
     @IBOutlet weak var artistName: UILabel!
-    
-    
+    @IBOutlet weak var songDuration: UILabel!
 }
 
 extension AlbumDetailsViewController: UITableViewDelegate, UITableViewDataSource

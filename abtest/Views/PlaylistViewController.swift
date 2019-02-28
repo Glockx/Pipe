@@ -8,12 +8,20 @@
 
 import UIKit
 import SwiftyUI
+import GoogleMobileAds
+import Reachability
+class PlaylistViewController: UIViewController, UITableViewDelegate, UITableViewDataSource,GADBannerViewDelegate {
 
-class PlaylistViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-
+    enum ObfuscatedConstants {
+        static let obfuscatedString: [UInt8] = [34, 17, 93, 37, 21, 28, 72, 23, 20, 22, 72, 125, 103, 122, 80, 94, 80, 80, 68, 114, 73, 73, 114, 92, 92, 87, 95, 78, 76, 81, 127, 98, 123, 82, 83, 81, 85, 68]
+    }
+    let reachability = Reachability()!
+    @IBOutlet var tableTopConst: NSLayoutConstraint!
+    @IBOutlet var adBanner: GADBannerView!
     @IBOutlet weak var tableBottomConstrain: NSLayoutConstraint!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var playlistPlaceholder: UIView!
+    var obfuscator = Obfuscator()
     
     override func viewDidLoad()
     {
@@ -29,7 +37,28 @@ class PlaylistViewController: UIViewController, UITableViewDelegate, UITableView
             navigationController?.navigationBar.prefersLargeTitles = true
             self.navigationController?.navigationItem.largeTitleDisplayMode = .always
         }
+        //PlaylistsViewRemoveAds
         NotificationCenter.default.addObserver(self, selector: #selector(reloadTable), name: Notification.Name(rawValue: "ReloadPlaylistTable"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(removeAds), name: Notification.Name(rawValue: "PlaylistsViewRemoveAds"), object: nil)
+        
+        reachability.whenReachable = { reachability in
+            if reachability.connection == .wifi {
+                print("Reachable via WiFi")
+                ADTool().showBanner(adBanner: self.adBanner, rootController: self, bannerID: Obfuscator().reveal(key: ObfuscatedConstants.obfuscatedString), bannerSize: kGADAdSizeSmartBannerPortrait)
+            } else {
+                print("Reachable via Cellular")
+                ADTool().showBanner(adBanner: self.adBanner, rootController: self, bannerID: Obfuscator().reveal(key: ObfuscatedConstants.obfuscatedString), bannerSize: kGADAdSizeSmartBannerPortrait)
+            }
+        }
+        reachability.whenUnreachable = { _ in
+            print("Not reachable")
+        }
+        
+        do {
+            try reachability.startNotifier()
+        } catch {
+            print("Unable to start notifier")
+        }
     }
 
     override func viewWillAppear(_ animated: Bool)
@@ -50,6 +79,32 @@ class PlaylistViewController: UIViewController, UITableViewDelegate, UITableView
             })
         }
         reloadPlaceholder()
+    }
+    
+    @objc func removeAds(){
+        if adBanner != nil{
+            adBanner.removeFromSuperview()
+        }
+        self.tableTopConst.constant = 0
+        self.view.layoutIfNeeded()
+        
+    }
+    
+    func adViewDidReceiveAd(_ bannerView: GADBannerView) {
+        print("Banner loaded successfully")
+        adBanner.isHidden = false
+        // Reposition the banner ad to create a slide down effect
+        let translateTransform = CGAffineTransform(translationX: 0, y: -adBanner.bounds.size.height)
+        adBanner.transform = translateTransform
+        
+        
+        UIView.animate(withDuration: 0.5)
+        {
+            self.adBanner.transform = CGAffineTransform.identity
+            self.tableTopConst.constant = 50
+            self.view.layoutIfNeeded()
+        }
+        
     }
     
     func reloadPlaceholder()

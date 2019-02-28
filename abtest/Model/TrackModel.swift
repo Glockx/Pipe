@@ -11,18 +11,24 @@ import AVFoundation
 
 class TrackModel: NSObject
 {
+    
+    
     class func getTracks(result : ([Track]) ->()) {
-        
+        let existingTracks = TrackModel().loadSongs() ?? TrackTool.shareInstance.tracks
         guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
         let fileURL = documentsDirectory.appendingPathComponent("tracks/").path
-        
         do {
             print("Load Data")
             let fileFromBundle = try FileManager.default.contentsOfDirectory(at: URL(fileURLWithPath: fileURL), includingPropertiesForKeys: nil, options: [])
-            let mp3Files = fileFromBundle.filter{ $0.pathExtension == "mp3" }
-            let mp3FileNames = mp3Files.map{ $0.deletingPathExtension().lastPathComponent }
+            let mp3FileNames = fileFromBundle.map{ $0.deletingPathExtension().lastPathComponent }
             
-            var tracks = [Track]()
+            var filteredmp3FileNames: Set<String> = []
+            let map = existingTracks.map{$0.fileName}
+            filteredmp3FileNames = Set(map).symmetricDifference(mp3FileNames)
+            dump(filteredmp3FileNames)
+            
+            
+            var tracks = TrackModel().loadSongs() ?? TrackTool.shareInstance.tracks
             var sortedTracks = [Track]()
             var title:String = "Unknown"
             var artist:String = "Unknown"
@@ -31,14 +37,14 @@ class TrackModel: NSObject
             var recordTime: String = ""
             
             
-            for path in mp3FileNames
+            for path in filteredmp3FileNames
             {
                 guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first  else { return }
                 let fileURL = NSURL(fileURLWithPath: documentsDirectory.appendingPathComponent("tracks/").path)
                 
                 let pathComponent = fileURL.appendingPathComponent(path + ".mp3")
                 
-                print(pathComponent)
+               
                 let playerItem = AVPlayerItem(url: pathComponent!)
                 let metadataList = playerItem.asset.metadata
                 
@@ -67,7 +73,7 @@ class TrackModel: NSObject
                     let fileURL = documentsDirectory.appendingPathComponent("artwork/" + fileName)
                     
                     
-                    print("path: ",path)
+                    
                     
                     if (artwork!.count > 0 && !FileManager.default.fileExists(atPath: fileURL.path))
                     {
@@ -89,9 +95,17 @@ class TrackModel: NSObject
             }
             
             print("Tracks: \(tracks.count)")
-            result(sortedTracks)
+            result(tracks)
         } catch let error{
             print(error)
         }
     }
+    
+    internal func loadSongs() -> [Track]!
+    {
+        let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+        let ArchiveURL = DocumentsDirectory.appendingPathComponent("Tracks")
+        return NSKeyedUnarchiver.unarchiveObject(withFile: ArchiveURL.path) as? [Track]
+    }
+    
 }

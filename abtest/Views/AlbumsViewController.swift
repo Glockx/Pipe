@@ -7,11 +7,21 @@
 //
 
 import UIKit
+import GoogleMobileAds
+import Reachability
 
-class AlbumsViewController: UIViewController,UITableViewDelegate,UITableViewDataSource
+class AlbumsViewController: UIViewController,UITableViewDelegate,UITableViewDataSource,GADBannerViewDelegate
 {
+    enum ObfuscatedConstants {
+        static let obfuscatedString: [UInt8] = [34, 17, 93, 37, 21, 28, 72, 23, 20, 22, 72, 125, 103, 122, 80, 94, 80, 80, 68, 114, 73, 73, 114, 92, 92, 87, 95, 78, 66, 83, 120, 96, 119, 82, 90, 87, 86, 66]
+    }
+    
+    @IBOutlet var tableTopConst: NSLayoutConstraint!
+    @IBOutlet var adBanner: GADBannerView!
     @IBOutlet weak var tablePlaceholder: UIView!
     @IBOutlet weak var tableView: UITableView!
+    let reachability = Reachability()!
+    let obfuscator = Obfuscator()
     var strechView: StrechView?
     var tracks = [Track]()
     var heightAtIndexPath = NSMutableDictionary()
@@ -33,7 +43,27 @@ class AlbumsViewController: UIViewController,UITableViewDelegate,UITableViewData
             self.navigationController?.navigationItem.largeTitleDisplayMode = .always
         }
         
-       NotificationCenter.default.addObserver(self, selector: #selector(loadTracks), name: Notification.Name(rawValue: "AlbumLoadTrack"), object: nil)
+        reachability.whenReachable = { reachability in
+            if reachability.connection == .wifi {
+                print("Reachable via WiFi")
+                ADTool().showBanner(adBanner: self.adBanner, rootController: self, bannerID: Obfuscator().reveal(key: ObfuscatedConstants.obfuscatedString), bannerSize: kGADAdSizeSmartBannerPortrait)
+            } else {
+                print("Reachable via Cellular")
+                ADTool().showBanner(adBanner: self.adBanner, rootController: self, bannerID: Obfuscator().reveal(key: ObfuscatedConstants.obfuscatedString), bannerSize: kGADAdSizeSmartBannerPortrait)
+            }
+        }
+        reachability.whenUnreachable = { _ in
+            print("Not reachable")
+        }
+        
+        do {
+            try reachability.startNotifier()
+        } catch {
+            print("Unable to start notifier")
+        }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(loadTracks), name: Notification.Name(rawValue: "AlbumLoadTrack"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(removeAds), name: Notification.Name(rawValue: "AlbumsViewRemoveAds"), object: nil)
     }
     
     override func viewWillAppear(_ animated: Bool)
@@ -55,6 +85,37 @@ class AlbumsViewController: UIViewController,UITableViewDelegate,UITableViewData
             })
         }
         reloadPlaceholder()
+    }
+    
+    
+    func adViewDidReceiveAd(_ bannerView: GADBannerView) {
+        print("Banner loaded successfully")
+        adBanner.isHidden = false
+        // Reposition the banner ad to create a slide down effect
+        let translateTransform = CGAffineTransform(translationX: 0, y: -adBanner.bounds.size.height)
+        adBanner.transform = translateTransform
+        
+        
+        UIView.animate(withDuration: 0.5)
+        {
+            self.adBanner.transform = CGAffineTransform.identity
+            self.tableTopConst.constant = 50
+            self.view.layoutIfNeeded()
+        }
+        
+    }
+    
+    func adView(_ bannerView: GADBannerView, didFailToReceiveAdWithError error: GADRequestError) {
+        print("Fail to receive ads")
+        print(error)
+    }
+    
+    @objc func removeAds(){
+        if adBanner != nil{
+            adBanner.removeFromSuperview()
+        }
+        self.tableTopConst.constant = 0
+        self.view.layoutIfNeeded()
     }
     
     func reloadPlaceholder()
