@@ -43,7 +43,6 @@ class MusicPlayerViewController: UIViewController,GADInterstitialDelegate {
     @IBOutlet weak var PlayButtonContainer: UIView!
     var popupTimer = Timer()
     var trackList = [Track]()
-    static var shared = MusicPlayerViewController()
     let obfuscator = Obfuscator()
     
     //TODO: Implement edit music metadata
@@ -92,7 +91,7 @@ class MusicPlayerViewController: UIViewController,GADInterstitialDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(enteredBackground), name: NSNotification.Name.UIApplicationDidEnterBackground, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(removeAds), name: NSNotification.Name(rawValue: "MusicPlayerRemoveAds"), object: nil)
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(updateSongWithDetails), name: NSNotification.Name(rawValue: "MusicPlayerUpdateSongWithDetails"), object: nil)
         
         reachability.whenReachable = { reachability in
             if reachability.connection == .wifi {
@@ -120,10 +119,6 @@ class MusicPlayerViewController: UIViewController,GADInterstitialDelegate {
         } catch {
             print("Unable to start notifier")
         }
-        
-        
-        
-        
  
     }
     
@@ -134,7 +129,7 @@ class MusicPlayerViewController: UIViewController,GADInterstitialDelegate {
     }
     
     func createAndLoadInterstitial() -> GADInterstitial {
-        let interstitial = GADInterstitial(adUnitID: "ca-app-pub-3940256099942544/5135589807")
+        let interstitial = GADInterstitial(adUnitID: "ca-app-pub-3452453039969028/3536774151")
         interstitial.delegate = self
         interstitial.load(GADRequest())
         return interstitial
@@ -162,7 +157,13 @@ class MusicPlayerViewController: UIViewController,GADInterstitialDelegate {
    @objc override func viewDidLayoutSubviews() {
     setupViewConstrains()
     }
- 
+    
+    @objc func updateSongWithDetails()
+    {
+        setupTrackDetails()
+        updateView()
+    }
+    
     func UpdateGeneralViewWithSongDetails()
     {
         setupTrackDetails()
@@ -200,7 +201,7 @@ class MusicPlayerViewController: UIViewController,GADInterstitialDelegate {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        NotificationCenter.default.addObserver(self, selector: #selector(nextPressed), name: NSNotification.Name(rawValue: trackFinish), object: nil)
+       // NotificationCenter.default.addObserver(self, selector: #selector(nextPressed), name: NSNotification.Name(rawValue: trackFinish), object: nil)
         super.viewWillAppear(animated)
         
         if TrackTool.shareInstance.getTrackMessage().isPlaying
@@ -254,11 +255,15 @@ class MusicPlayerViewController: UIViewController,GADInterstitialDelegate {
     
     @objc func DownSwipe(){
         print("down")
-        dismiss(animated: true, completion: nil)
         UIApplication.shared.setStatusBarStyle(UIStatusBarStyle.default, animated: false)
         UIApplication.shared.statusBarView?.backgroundColor = .white
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: "addobser"), object: nil)
         NotificationCenter.default.removeObserver(self)
+         self.presentingViewController?.dismiss(animated: true, completion: nil)
+    }
+    
+    deinit {
+        print("detailViewController deallocated")
     }
     
     @objc func singleTapped() {
@@ -480,7 +485,7 @@ class MusicPlayerViewController: UIViewController,GADInterstitialDelegate {
         
         NotificationCenter.default.post(name: NSNotification.Name(rawValue: "addobser"), object: nil)
         NotificationCenter.default.removeObserver(self)
-        dismiss(animated: true, completion: nil)
+        self.presentingViewController?.dismiss(animated: true, completion: nil)
     }
 
     func setupTrackDetails() {
@@ -511,11 +516,6 @@ class MusicPlayerViewController: UIViewController,GADInterstitialDelegate {
         popupTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) {
             timer in
             let track = TrackTool.shareInstance.getTrackMessage()
-            let status = UIApplication.shared.applicationState
-            if status == .background {
-
-            }
-
             if track.isPlaying {
                 // print(track.currentTime, track.totalTime)
                 self.songTrack.value = Float(track.currentTime / track.totalTime)

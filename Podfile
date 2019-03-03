@@ -21,4 +21,17 @@ pod 'SwiftyStoreKit'
 pod 'SwiftKeychainWrapper'
 pod 'PMAlertController'
 pod 'ReachabilitySwift'
+pod 'APlay'
+pod 'KRProgressHUD'
+end
+
+post_install do |installer|
+ installer.pods_project.targets.each do |target|
+        target.build_configurations.each do |config|
+            swiftPods = ['APlay']
+            if swiftPods.include?(target.name)
+                config.build_settings['SWIFT_OPTIMIZATION_LEVEL'] =  '-Onone'
+            end
+        end
+    end
 end

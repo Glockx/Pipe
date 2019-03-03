@@ -1,4 +1,5 @@
 PODS:
+  - APlay (0.1.1)
   - BCColor (0.2)
   - Eureka (4.3.1)
   - Firebase/Core (5.16.0):
@@ -49,6 +50,9 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (5.3.7):
     - GoogleUtilities/Logger
+  - KRActivityIndicatorView (3.0.0)
+  - KRProgressHUD (3.4.0):
+    - KRActivityIndicatorView (= 3.0.0)
   - MarqueeLabel/Swift (3.2.0)
   - nanopb (0.3.901):
     - nanopb/decode (= 0.3.901)
@@ -68,11 +72,13 @@ PODS:
   - ViewAnimator (2.2.2)
 
 DEPENDENCIES:
+  - APlay
   - BCColor
   - Eureka
   - Firebase/Core
   - GCDWebServer/WebUploader (~> 3.0)
   - Google-Mobile-Ads-SDK
+  - KRProgressHUD
   - MarqueeLabel/Swift
   - NotificationBannerSwift
   - PMAlertController
@@ -86,6 +92,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
+    - APlay
     - BCColor
     - Eureka
     - Firebase
@@ -96,6 +103,8 @@ SPEC REPOS:
     - Google-Mobile-Ads-SDK
     - GoogleAppMeasurement
     - GoogleUtilities
+    - KRActivityIndicatorView
+    - KRProgressHUD
     - MarqueeLabel
     - nanopb
     - NotificationBannerSwift
@@ -109,6 +118,7 @@ SPEC REPOS:
     - ViewAnimator
 
 SPEC CHECKSUMS:
+  APlay: 7d93dbcccde60aab3462ac778f86a848d1187fe6
   BCColor: 2425540cb0da92795b81a1f15b5289a92279c9eb
   Eureka: 28ea296f06710f6745266b71f17862048941a32d
   Firebase: 749a8ff4962f9d8c79dda1966de20f6f77583d67
@@ -119,6 +129,8 @@ SPEC CHECKSUMS:
   Google-Mobile-Ads-SDK: d0f10a7c4d7015db23075ff316602350d12049db
   GoogleAppMeasurement: 621f3bc6211d5ba548debe01fafad30cf5ab6859
   GoogleUtilities: 111a012f4c3a29c9e7c954c082fafd6ee3c999c0
+  KRActivityIndicatorView: c414000730a6f4969eeb354bee4f2aebc89c2c2e
+  KRProgressHUD: 79c8703f82179fe34b3602f10b30726f887983fa
   MarqueeLabel: 440a502b91a9179bd98f9fff00ba1150650a1c0e
   nanopb: 2901f78ea1b7b4015c860c2fdd1ea2fee1a18d48
   NotificationBannerSwift: 49fc4be7fabada55b189b50e72184c92edd5f7f7
@@ -131,6 +143,6 @@ SPEC CHECKSUMS:
   SwiftyUI: 255012436bd2f7e4ee9c3f36256010a6e1780598
   ViewAnimator: 6eaa112663b6a2d9e6b2573df65b416dd051cbe4
 
-PODFILE CHECKSUM: ee4fe3ae4c407cf549eca63212d77c83b23cf51d
+PODFILE CHECKSUM: 4ed7d9429fdc27f2f00b074994224bd4873f0a67
 
 COCOAPODS: 1.6.0

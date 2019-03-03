@@ -57,7 +57,6 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
         tableView.delegate = self
      
         self.loadTracks()
-
         
         reachability.whenReachable = { reachability in
             if reachability.connection == .wifi {
@@ -108,11 +107,12 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
         
          NotificationCenter.default.addObserver(self, selector: #selector(showMusicPlayer), name: Notification.Name(rawValue: "showMusicPlayer"), object: nil)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(playnext), name: NSNotification.Name(rawValue: trackFinish), object: nil)
+       // NotificationCenter.default.addObserver(self, selector: #selector(playnext), name: NSNotification.Name(rawValue: trackFinish), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(disableAds), name: NSNotification.Name(rawValue: "FilesViewRemoveAds"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(addObser), name: NSNotification.Name(rawValue: "addobser"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(justEnteredToApp), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
         
+        //MusicPlayerTool.shared.play()
     }
 
     @objc func disableAds(){
@@ -147,7 +147,7 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
     
     @objc func addObser()
     {
-        NotificationCenter.default.addObserver(self, selector: #selector(playnext), name: NSNotification.Name(rawValue: trackFinish), object: nil)
+       // NotificationCenter.default.addObserver(self, selector: #selector(playnext), name: NSNotification.Name(rawValue: trackFinish), object: nil)
     }
     
     override func viewDidAppear(_ animated: Bool)
@@ -277,7 +277,7 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
    {
         let mainStoryboard = UIStoryboard(name: "Main", bundle: Bundle.main)
         let vc : MusicPlayerViewController = mainStoryboard.instantiateViewController(withIdentifier: "MusicControl") as! MusicPlayerViewController
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: trackFinish), object: nil)
+        //NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: trackFinish), object: nil)
         self.present(vc, animated: true, completion: nil)
     }
     
@@ -311,18 +311,17 @@ class FilesViewController:  UIViewController, UITableViewDelegate, UITableViewDa
         {
             DispatchQueue.main.async
                 {
-                    
                     guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
                     let fileURL = documentsDirectory.appendingPathComponent("artwork/" + track.fileName)
                     
                     if FileManager.default.fileExists(atPath: fileURL.path)
                     {
-                        let image = loadImageFromDiskWith(fileName: track.fileName)
-                        //                let imagesize = image?.size
-                        //                UIGraphicsBeginImageContext(imagesize!)
-                        //                image?.draw(in: CGRect(x: 0, y: 0, width: imagesize?.width ?? 0.0, height: imagesize?.height ?? 0.0))
-                        //                image = UIGraphicsGetImageFromCurrentImageContext()
-                        //                UIGraphicsEndImageContext();
+                        var image = loadImageFromDiskWith(fileName: track.fileName)
+                                        let imagesize = image?.size
+                                        UIGraphicsBeginImageContext(imagesize!)
+                                        image?.draw(in: CGRect(x: 0, y: 0, width: imagesize?.width ?? 0.0, height: imagesize?.height ?? 0.0))
+                                        image = UIGraphicsGetImageFromCurrentImageContext()
+                                        UIGraphicsEndImageContext();
                         cell.cellimageView.image = image
                     }
                     else{

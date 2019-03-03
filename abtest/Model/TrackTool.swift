@@ -45,15 +45,17 @@ class TrackTool: NSObject , AVAudioPlayerDelegate{
         super.init()
         
         let session = AVAudioSession.sharedInstance()
+        
         do {
             try session.setCategory(AVAudioSessionCategoryPlayback)
-            
+            print("setuping")
             try session.setActive(true)
             setupRemoteTransportControls()
         } catch {
             print(error)
             return
         }
+        
     }
     
 
@@ -225,8 +227,16 @@ class TrackTool: NSObject , AVAudioPlayerDelegate{
     
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool)
     {
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: trackFinish), object: self, userInfo: nil)
-        setupLockScreen()
+       // NotificationCenter.default.post(name: NSNotification.Name(rawValue: trackFinish), object: self, userInfo: nil)
+         print("finished")
+        if isRepeated{
+            self.playCurrnetTrack()
+            setupLockScreen()
+        }else{
+            self.nextTrack()
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "MusicPlayerUpdateSongWithDetails"), object: nil)
+            setupLockScreen()
+        }
     }
     
     func setupShuffleButton(button: UIButton){
@@ -234,8 +244,8 @@ class TrackTool: NSObject , AVAudioPlayerDelegate{
             if(button.backgroundColor == UIColor.black)
             {
                 button.imageView?.tintColor = .black
-               button.layer.borderColor = UIColor.white.cgColor
-               button.backgroundColor = nil
+                button.layer.borderColor = UIColor.white.cgColor
+                button.backgroundColor = nil
                 TrackTool.shareInstance.sortList()
             }
             else
@@ -250,6 +260,7 @@ class TrackTool: NSObject , AVAudioPlayerDelegate{
             }
         })
     }
+    
     func setupRepeatButton(button: UIButton)
     {
         UIView.animate(withDuration: 0.3, animations: {
@@ -279,10 +290,6 @@ class TrackTool: NSObject , AVAudioPlayerDelegate{
 
 
 extension TrackTool {
-    
-    
-    
-    
     func determinePreviousPressed()
     {
         let track = getTrackMessage()

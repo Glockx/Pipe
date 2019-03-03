@@ -55,12 +55,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         // Deliver content from server, then:
                         SwiftyStoreKit.finishTransaction(purchase.transaction)
                     }
+                    print("purchased: ",purchase)
                 // Unlock content
+                   
                 case .failed, .purchasing, .deferred:
                     break // do nothing
                 }
             }
+            
         }
+        // get price of remove ad
+        ADTool.shareInstance.CheckNetworkAndGetPrices()
         
         //dump(PlaylistTool.shareInstance.playlists)
         #if DEBUG

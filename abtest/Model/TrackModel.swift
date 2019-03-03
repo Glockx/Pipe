@@ -29,7 +29,6 @@ class TrackModel: NSObject
             
             
             var tracks = TrackModel().loadSongs() ?? TrackTool.shareInstance.tracks
-            var sortedTracks = [Track]()
             var title:String = "Unknown"
             var artist:String = "Unknown"
             var artwork: Data?
@@ -91,7 +90,6 @@ class TrackModel: NSObject
                 let track = Track(title: title, artist: artist, fileName: path, artwork: nil,album: album,recordTime: recordTime,uuid: uuid)
                 
                 tracks.append(track)
-                sortedTracks = tracks.sorted { $0.fileName < $1.fileName }
             }
             
             print("Tracks: \(tracks.count)")

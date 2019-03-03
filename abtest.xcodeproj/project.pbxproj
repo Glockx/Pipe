@@ -34,7 +34,6 @@
 		56712307220B325C001BFC3A /* PlaylistDetailsHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56712306220B325C001BFC3A /* PlaylistDetailsHeaderView.swift */; };
 		5685498A221C465E009332E8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 56854989221C465C009332E8 /* GoogleService-Info.plist */; };
 		568D84BE2226D79300C86F91 /* GCDWebUploaderTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 568D84BD2226D79300C86F91 /* GCDWebUploaderTool.swift */; };
-		568D84C02226E3A700C86F91 /* FolderMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 568D84BF2226E3A700C86F91 /* FolderMonitor.swift */; };
 		568DAABB220866830096D514 /* SongListForPlaylistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 568DAABA220866830096D514 /* SongListForPlaylistViewController.swift */; };
 		56959D2321FB549B0071F71B /* MiniPlayerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 56959D2221FB549B0071F71B /* MiniPlayerView.xib */; };
 		56959D2521FB54C40071F71B /* MiniPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56959D2421FB54C40071F71B /* MiniPlayerView.swift */; };
@@ -83,7 +82,6 @@
 		56712306220B325C001BFC3A /* PlaylistDetailsHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistDetailsHeaderView.swift; sourceTree = "<group>"; };
 		56854989221C465C009332E8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		568D84BD2226D79300C86F91 /* GCDWebUploaderTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GCDWebUploaderTool.swift; sourceTree = "<group>"; };
-		568D84BF2226E3A700C86F91 /* FolderMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderMonitor.swift; sourceTree = "<group>"; };
 		568DAABA220866830096D514 /* SongListForPlaylistViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongListForPlaylistViewController.swift; sourceTree = "<group>"; };
 		56959D2221FB549B0071F71B /* MiniPlayerView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MiniPlayerView.xib; sourceTree = "<group>"; };
 		56959D2421FB54C40071F71B /* MiniPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerView.swift; sourceTree = "<group>"; };
@@ -184,7 +182,6 @@
 				5656E6652212F8E600173693 /* TimerTool.swift */,
 				567032EA221D634B003E1C46 /* ADTool.swift */,
 				568D84BD2226D79300C86F91 /* GCDWebUploaderTool.swift */,
-				568D84BF2226E3A700C86F91 /* FolderMonitor.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -359,10 +356,13 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-abtest/Pods-abtest-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/APlay/APlay.framework",
 				"${BUILT_PRODUCTS_DIR}/BCColor/BCColor.framework",
 				"${BUILT_PRODUCTS_DIR}/Eureka/Eureka.framework",
 				"${BUILT_PRODUCTS_DIR}/GCDWebServer/GCDWebServer.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
+				"${BUILT_PRODUCTS_DIR}/KRActivityIndicatorView/KRActivityIndicatorView.framework",
+				"${BUILT_PRODUCTS_DIR}/KRProgressHUD/KRProgressHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/MarqueeLabel/MarqueeLabel.framework",
 				"${BUILT_PRODUCTS_DIR}/NotificationBannerSwift/NotificationBannerSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/PMAlertController/PMAlertController.framework",
@@ -377,10 +377,13 @@
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/APlay.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/BCColor.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Eureka.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GCDWebServer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KRActivityIndicatorView.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/KRProgressHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MarqueeLabel.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NotificationBannerSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PMAlertController.framework",
@@ -417,7 +420,6 @@
 				190EF40E2144367F000EC0F0 /* Extensions.swift in Sources */,
 				190EF3ED2143D692000EC0F0 /* AppDelegate.swift in Sources */,
 				56FF70B4221FD21C00C1C021 /* Obfuscator.swift in Sources */,
-				568D84C02226E3A700C86F91 /* FolderMonitor.swift in Sources */,
 				19BAC96C2144D84B003FC817 /* FilesViewController .swift in Sources */,
 				568D84BE2226D79300C86F91 /* GCDWebUploaderTool.swift in Sources */,
 				190B5FC621467A7E00B3B7C9 /* TimeFormat.swift in Sources */,
