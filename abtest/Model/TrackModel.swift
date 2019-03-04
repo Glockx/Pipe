@@ -13,8 +13,10 @@ class TrackModel: NSObject
 {
     
     
-    class func getTracks(result : ([Track]) ->()) {
+    class func getTracks(result : ([Track]) ->())
+    {
         let existingTracks = TrackModel().loadSongs() ?? TrackTool.shareInstance.tracks
+        
         guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
         let fileURL = documentsDirectory.appendingPathComponent("tracks/").path
         do {
@@ -25,10 +27,10 @@ class TrackModel: NSObject
             var filteredmp3FileNames: Set<String> = []
             let map = existingTracks.map{$0.fileName}
             filteredmp3FileNames = Set(map).symmetricDifference(mp3FileNames)
-            dump(filteredmp3FileNames)
+            dump(mp3FileNames)
             
             
-            var tracks = TrackModel().loadSongs() ?? TrackTool.shareInstance.tracks
+            var tracks = [Track]()
             var title:String = "Unknown"
             var artist:String = "Unknown"
             var artwork: Data?
@@ -36,7 +38,7 @@ class TrackModel: NSObject
             var recordTime: String = ""
             
             
-            for path in filteredmp3FileNames
+            for path in mp3FileNames
             {
                 guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first  else { return }
                 let fileURL = NSURL(fileURLWithPath: documentsDirectory.appendingPathComponent("tracks/").path)
@@ -94,6 +96,7 @@ class TrackModel: NSObject
             
             print("Tracks: \(tracks.count)")
             result(tracks)
+            dump(tracks)
         } catch let error{
             print(error)
         }

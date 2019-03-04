@@ -79,9 +79,13 @@ class SongServerViewController: UIViewController
     
     @IBAction func TransferDone(_ sender: Any)
     {
-        GCDWebUploaderTool.shareInstance.stopServer()
-        loadSongs(handleComplete: saveData)
         
+        GCDWebUploaderTool.shareInstance.stopServer()
+        DispatchQueue.main.async {
+            self.loadSongs(handleComplete: self.saveData)
+        }
+        
+        //KRProgressHUD.dismiss()
         NotificationCenter.default.post(name: Notification.Name(rawValue: "loadtracks"), object: nil)
         NotificationCenter.default.post(name: Notification.Name(rawValue: "AlbumLoadTrack"), object: nil)
         NotificationCenter.default.post(name: Notification.Name(rawValue: "updateUsedSize"), object: nil)

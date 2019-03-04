@@ -14,7 +14,7 @@ import GoogleMobileAds
 import Reachability
 //TODO: Make Artist and Track Label MarqueeLabel
 
-class MusicPlayerViewController: UIViewController,GADInterstitialDelegate {
+class MusicPlayerViewController: UIViewController,GADInterstitialDelegate,GADAudioVideoManagerDelegate {
 
     enum ObfuscatedConstants {
         static let obfuscatedString: [UInt8] = [34, 17, 93, 37, 21, 28, 72, 23, 20, 22, 72, 125, 103, 122, 80, 94, 80, 80, 68, 114, 73, 73, 114, 92, 92, 87, 95, 78, 71, 92, 118, 98, 125, 82, 83, 93, 85, 65]
@@ -50,7 +50,7 @@ class MusicPlayerViewController: UIViewController,GADInterstitialDelegate {
     {
         super.viewDidLoad()
         
-        GADMobileAds.sharedInstance().applicationMuted = true
+        
         
         UpdateGeneralViewWithSongDetails()
         
@@ -60,7 +60,11 @@ class MusicPlayerViewController: UIViewController,GADInterstitialDelegate {
         songTrack.setMaximumTrackImage(UIImage(named: "Lighter"), for: UIControlState.normal )
         songTrack.setMinimumTrackImage(UIImage(named: "Black"), for: UIControlState.normal )
         
-       
+        GADMobileAds.sharedInstance().audioVideoManager.delegate = self
+        GADMobileAds.sharedInstance().audioVideoManager.audioSessionIsApplicationManaged = true
+        
+        GADMobileAds.sharedInstance().applicationMuted = true
+        
         fileName.type = .continuous
         fileName.speed = .duration(12.0)
         fileName.fadeLength = 15.0
@@ -119,7 +123,11 @@ class MusicPlayerViewController: UIViewController,GADInterstitialDelegate {
         } catch {
             print("Unable to start notifier")
         }
- 
+        
+    }
+    
+    func audioVideoManagerWillPlayAudio(_ audioVideoManager: GADAudioVideoManager) {
+        print("playing")
     }
     
     @objc func removeAds(){
@@ -134,6 +142,8 @@ class MusicPlayerViewController: UIViewController,GADInterstitialDelegate {
         interstitial.load(GADRequest())
         return interstitial
     }
+    
+    
     
     func interstitialDidDismissScreen(_ ad: GADInterstitial)
     {
